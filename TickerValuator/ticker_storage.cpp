@@ -35,3 +35,8 @@ void ticker_storage::classify() {
     }
     is_classified = true;
 }
+
+const std::unordered_map<std::string, std::pair<std::__wrap_iter<std::vector<ticker, std::__1::allocator<ticker>>::pointer>, std::__wrap_iter<std::vector<ticker, std::__1::allocator<ticker>>::pointer>>> &
+ticker_storage::getClassifying_map_() const {
+    return classifying_map_;
+}
