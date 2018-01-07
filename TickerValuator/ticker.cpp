@@ -30,12 +30,28 @@ double ticker::get_avg_price() {
     return std::accumulate(price_.begin(), price_.end(), 0.0) / price_.size();
 }
 
-std::string ticker::get_symbol() {
-    return symbol_;
-}
-
 
 bool ticker::operator<(const ticker &a) const {
     return (symbol_< a.symbol_ || date_ < a.date_ || a.time_ < time_ ||
             seconds_ < a.seconds_);
+}
+
+int ticker::getDate_() const {
+    return date_;
+}
+
+int ticker::getTime_() const {
+    return time_;
+}
+
+double ticker::getSeconds_() const {
+    return seconds_;
+}
+
+const std::vector<double> &ticker::getPrice_() const {
+    return price_;
+}
+
+const std::string &ticker::getSymbol_() const {
+    return symbol_;
 }

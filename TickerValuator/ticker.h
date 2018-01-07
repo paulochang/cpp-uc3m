@@ -15,8 +15,18 @@ public:
     ticker (int date, int time, double seconds, std::string symbol, double price);
     void add_price(double price);
     double get_avg_price();
-    std::string get_symbol();
     bool operator<(const ticker &a) const;
+
+    int getDate_() const;
+
+    int getTime_() const;
+
+    double getSeconds_() const;
+
+    const std::vector<double> &getPrice_() const;
+
+    const std::string &getSymbol_() const;
+
 private:
     //Date format is: day-month-year
     int date_ { 01010001 };
