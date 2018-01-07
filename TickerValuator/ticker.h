@@ -14,11 +14,15 @@ public:
            unsigned short secs, float decimals, std::string symbol, double price);
     ticker (int date, int time, double seconds, std::string symbol, double price);
     void add_price(double price);
+    double get_avg_price();
+    std::string get_symbol();
+    bool operator<(const ticker &a) const;
 private:
-    int date_ { 010101 };
+    //Date format is: day-month-year
+    int date_ { 01010001 };
     int time_ { 0000 };
     double seconds_{ 0.000000 };
-    std::string symbol_{ ""s };
+    std::string symbol_ = "Initial string";
     std::vector<double> price_ { 0.00 };
 };
 
