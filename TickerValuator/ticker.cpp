@@ -26,7 +26,7 @@ void ticker::add_price(double price) {
     price_.push_back(price);
 }
 
-double ticker::get_avg_price() {
+double ticker::get_avg_price() const {
     return std::accumulate(price_.begin(), price_.end(), 0.0) / price_.size();
 }
 
@@ -54,4 +54,14 @@ const std::vector<double> &ticker::getPrice_() const {
 
 const std::string &ticker::getSymbol_() const {
     return symbol_;
+}
+
+const std::string ticker::to_string() const {
+    std::string s = "ticker {"+ getSymbol_()
+                    + " date: " + std::to_string(getDate_())
+                    + " time: " + std::to_string(getTime_())
+                    + " seconds: " + std::to_string(getSeconds_())
+                    + " price: " + std::to_string(get_avg_price())
+                    +"}";
+    return s;
 }
