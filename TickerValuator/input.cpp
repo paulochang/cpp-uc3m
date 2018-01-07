@@ -1,40 +1,71 @@
-// reading a text file
+#include <string>
 #include <iostream>
 #include <fstream>
-#include <string>
+#include <stdexcept>
 
+#include "parser.h"
 #include "ticker.h"
 
-using namespace std;
+int main(int argc, char ** argv) {
+  using namespace std;
 
-int main () {
-  string line;
-  ifstream myfile ("../sample_input.txt");
-  if (myfile.is_open())
-  {
-    while ( getline (myfile,line) )
-    {
-        cout << "date: " << line.substr(0,2) << line.substr(3,2) << line.substr(6,4) << '\n';
-        cout << "time: " << line.substr(11,2) << line.substr(14,2) << '\n';
-        cout << "seconds: " << line.substr(17, 9) << '\n';
-        cout << "symbol: " << line.substr(line.find('"')+1, line.find('"', line.find('"')+1) - line.find('"')-1) << '\n';
-        cout << "price: " << line.substr(line.find('"', line.find('"')+1)+2) << '\n';
-        cout << "line:" << line << '\n';
+  
+  string input_path;
+  string output_path;
+  parser ps = parser();
 
-        int date = stoi(line.substr(0,2) + line.substr(3,2) + line.substr(6,4));
-        int time = stoi(line.substr(11,2) + line.substr(14,2));
-        double seconds = stod(line.substr(17, 9));
-        string symbol = line.substr(line.find('"')+1, line.find('"', line.find('"')+1) - line.find('"')-1);
-        double price = stod(line.substr(line.find('"', line.find('"')+1)+2));
-
-
-        ticker(date, time, seconds, symbol, price);
-
+  if (argc == 1 ) {
+    // Default
+    ps.parse_input(false, false, "", "");
+  } else if (argc == 3){
+    // input or output
+    string argv1 = argv[1];
+    if (argv1 == "-i"){
+      // set input path
+      input_path = argv[2];
+      ps.parse_input(true, false, input_path, "");
+    } else if (argv1 == "-o"){
+      // set output path
+      output_path = argv[2];
+    } else{
+      cerr << "Wrong arguments" << endl;
+      return -1;
     }
-    myfile.close();
+  } else if (argc == 5){
+    // input and output
+    string argv1 = argv[1];
+    string argv3 = argv[3];
+
+    if (argv1 == "-i"){
+      // set input path
+      input_path = argv[2];
+    } else if (argv1 == "-o"){
+      // set output path
+      output_path = argv[2];
+    } else{
+      cerr << "Wrong arguments" << endl;
+      return -1;
+    }
+
+    if (argv3 == "-i"){
+      // set input path
+      input_path = argv[4];
+    } else if (argv3 == "-o"){
+      // set output path
+      output_path = argv[4];
+    } else{
+      cerr << "Wrong arguments" << endl;
+      return -1;
+    }
+
+  } else{
+      cerr << "Wrong arguments" << endl;
+      cerr << "Valid formats: " << endl;
+      cerr << "-i <filename>" << endl;
+      cerr << "-o <path>" << endl;
+      cerr << "-i <filename> -o <path>" << endl;
+      return -1;
   }
 
-  else cout << "Unable to open file"; 
 
-  return 0;
 }
