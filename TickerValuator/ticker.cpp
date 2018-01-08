@@ -4,6 +4,7 @@
 
 #include <numeric>
 #include "ticker.h"
+#include <iostream> 
 
 ticker::ticker(unsigned short d, unsigned short m, unsigned short y, unsigned short h, unsigned short min,
                unsigned short secs, float decimals, std::string symbol, double price) {
@@ -65,3 +66,8 @@ const std::string ticker::to_string() const {
                     +"}";
     return s;
 }
+
+std::ostream & operator<<(std::ostream & os, const ticker & tk)  
+{ 
+    return os << tk.getSymbol_() << ": " << tk.getDate_() << " | " << tk.getTime_() << tk.getSeconds_() << " | " << tk.get_avg_price();  
+}  
