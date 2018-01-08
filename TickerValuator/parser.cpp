@@ -24,7 +24,10 @@ void parser::parse_input(bool input, bool output, string input_path, string outp
             double price = stod(line.substr(line.find('"', line.find('"')+1)+2));
 
 
-            ticker(date, time, seconds, symbol, price);
+            //ticker tk = ticker(date, time, seconds, symbol, price);
+            
+            //cout << tk;
+
 
         }
         myfile.close();
