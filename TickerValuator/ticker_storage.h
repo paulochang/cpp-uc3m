@@ -20,6 +20,8 @@ public:
     const std::unordered_map<std::string, std::pair<std::__wrap_iter<std::vector<ticker, std::__1::allocator<ticker>>::pointer>, std::__wrap_iter<std::vector<ticker, std::__1::allocator<ticker>>::pointer>>> &
     getClassifying_map_() const;
 
+    const std::vector<ticker> &getTicker_vector_() const;
+
 private:
     std::vector<ticker> ticker_vector_;
     std::unordered_set<std::string> symbol_set_;
