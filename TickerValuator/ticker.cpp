@@ -33,8 +33,8 @@ double ticker::get_avg_price() const {
 
 
 bool ticker::operator<(const ticker &a) const {
-    return (symbol_< a.symbol_ || date_ < a.date_ || a.time_ < time_ ||
-            seconds_ < a.seconds_);
+    return std::tie(this->symbol_, this->date_, this->time_) <
+            std::tie(a.symbol_, a.date_, a.time_);
 }
 
 int ticker::getDate_() const {

@@ -17,13 +17,22 @@ int main() {
     ts.add_ticker(t2);
     ts.add_ticker(t3);
     ts.sort_ticker();
+
+    std::cout << "Sorted Ticker vector:" << endl;
+    for (auto i: ts.getTicker_vector_()) {
+        std::cout << i.to_string() << endl;
+    }
+
     ts.classify();
 
-    cout << "Holi: " << t1 << endl;
+
+    std::cout << "Holi: " << t1 << endl;
+    std::cout << "Ticker classifying map:" << endl;
+
 
     for(auto i : ts.getClassifying_map_()) {
         for ( auto it = i.second.first; it != i.second.second; ++it )
-            std::cout << " " << it.base()->to_string();
+            std::cout << " " << it.base()->to_string() << endl;
     }
 
     return 0;
