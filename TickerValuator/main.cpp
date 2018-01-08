@@ -2,6 +2,7 @@
 #include <string>
 #include <algorithm>
 #include <vector>
+#include "ticker.h"
 #include "ticker_storage.h"
 
 int main() {
@@ -24,7 +25,10 @@ int main() {
 
     ts.classify();
 
+
+    std::cout << "Holi: " << t1 << endl;
     std::cout << "Ticker classifying map:" << endl;
+
 
     for(auto i : ts.getClassifying_map_()) {
         for ( auto it = i.second.first; it != i.second.second; ++it )

@@ -29,7 +29,6 @@ public:
 
     const std::string to_string() const;
 
-
 private:
     //Date format is: day-month-year
     int date_ { 01010001 };
@@ -38,6 +37,9 @@ private:
     std::string symbol_ = "Initial string";
     std::vector<double> price_ { };
 };
+
+std::ostream & operator<<(std::ostream & os, const ticker & tk);
+
 
 
 #endif //TICKERVALUATOR_TICKER_H
