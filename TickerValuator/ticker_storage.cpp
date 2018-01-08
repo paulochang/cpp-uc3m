@@ -40,3 +40,7 @@ const std::unordered_map<std::string, std::pair<std::__wrap_iter<std::vector<tic
 ticker_storage::getClassifying_map_() const {
     return classifying_map_;
 }
+
+const std::vector<ticker> &ticker_storage::getTicker_vector_() const {
+    return ticker_vector_;
+}
