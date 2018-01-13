@@ -70,24 +70,4 @@ const std::string ticker::to_string() const {
 std::ostream & operator<<(std::ostream & os, const ticker & tk)  
 { 
     return os << tk.getSymbol_() << ": " << tk.getDate_() << " | " << tk.getTime_() << tk.getSeconds_() << " | " << tk.get_avg_price();  
-}
-
-std::istream & operator>>(std::istream & is, ticker & tk) {
-  using namespace std;
-
-  int date, time;
-  double seconds, price;
-  std::string symbol;
-  
-  char s1, s2;
-  is >> date >> time >> s1 >> seconds >> price >> s2 >> symbol;
-  if (!is) return is;
-  if (s1 != '/' || s2 != '/') {
-    is.clear(ios_base::failbit);
-    return is;
-  }
-
-  tk = ticker{date, time, seconds, symbol, price};
-  
-  return is;
-}
+}  
