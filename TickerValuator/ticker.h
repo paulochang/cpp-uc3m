@@ -39,7 +39,6 @@ private:
 };
 
 std::ostream & operator<<(std::ostream & os, const ticker & tk);
-std::istream & operator>>(std::istream & is, ticker & tk);
 
 
 
