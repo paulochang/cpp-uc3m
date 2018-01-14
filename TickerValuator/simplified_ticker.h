@@ -7,7 +7,13 @@
 
 
 class simplified_ticker {
+public:
+    simplified_ticker(unsigned int date_, unsigned short time_, double price);
 
+private:
+    unsigned int date_;
+    unsigned short time_;
+    double price_;
 };
 
 
