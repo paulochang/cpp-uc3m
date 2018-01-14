@@ -10,6 +10,7 @@
 
 class ticker {
 public:
+    ticker() {}
     ticker(unsigned short d, unsigned short m, unsigned short y, unsigned short h, unsigned short min,
            unsigned short secs, float decimals, std::string symbol, double price);
 
@@ -43,6 +44,6 @@ private:
 };
 
 std::ostream &operator<<(std::ostream &os, const ticker &tk);
-
+std::istream &operator>>(std::istream &is, ticker & tk);
 
 #endif //TICKERVALUATOR_TICKER_H
