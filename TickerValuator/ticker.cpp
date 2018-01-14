@@ -33,8 +33,8 @@ double ticker::get_avg_price() const {
 
 
 bool ticker::operator<(const ticker &a) const {
-    return std::tie(this->symbol_, this->date_, this->time_) <
-            std::tie(a.symbol_, a.date_, a.time_);
+    return (symbol_< a.symbol_ || date_ < a.date_ || a.time_ < time_ ||
+            seconds_ < a.seconds_);
 }
 
 int ticker::getDate_() const {
@@ -73,21 +73,20 @@ std::ostream & operator<<(std::ostream & os, const ticker & tk)
 }
 
 std::istream & operator>>(std::istream & is, ticker & tk) {
-  using namespace std;
+    using namespace std;
 
-  int date, time;
-  double seconds, price;
-  std::string symbol;
-  
-  char s1, s2;
-  is >> date >> time >> s1 >> seconds >> price >> s2 >> symbol;
-  if (!is) return is;
-  if (s1 != '/' || s2 != '/') {
-    is.clear(ios_base::failbit);
+    double price;
+    std::string date_str, time_str, symbol_str;
+    
+    is >> date_str >> time_str >> symbol_str >> price;
+    if (!is) return is;
+
+    int date = stoi(date_str.substr(0,2) + date_str.substr(3,2) + date_str.substr(6,4));
+    int time = stoi(time_str.substr(0,2) + time_str.substr(3,2));
+    double seconds = stod(time_str.substr(6, 9));
+    string symbol = symbol_str.substr(1, symbol_str.length()-2);
+
+    tk = ticker{date, time, seconds, symbol, price};
+
     return is;
-  }
-
-  tk = ticker{date, time, seconds, symbol, price};
-  
-  return is;
 }
