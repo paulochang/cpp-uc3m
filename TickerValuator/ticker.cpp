@@ -4,18 +4,18 @@
 
 #include <numeric>
 #include "ticker.h"
-#include <iostream> 
+#include <iostream>
 
 ticker::ticker(unsigned short d, unsigned short m, unsigned short y, unsigned short h, unsigned short min,
                unsigned short secs, float decimals, std::string symbol, double price) {
-    date_ = d * 1000000 + m * 10000 + y;
-    time_ = h * 100 + min;
+    date_ = d * 1000000u + m * 10000u + y;
+    time_ = h * 100u + min;
     seconds_ = secs + decimals;
-    symbol_ = symbol;
+    symbol_ = std::move(symbol);
     price_.push_back(price);
 }
 
-ticker::ticker(int date, int time, double seconds, std::string symbol, double price) {
+ticker::ticker(unsigned int date, unsigned short time, double seconds, std::string symbol, double price) {
     date_ = date;
     time_ = time;
     seconds_ = seconds;
@@ -27,47 +27,43 @@ void ticker::add_price(double price) {
     price_.push_back(price);
 }
 
-double ticker::get_avg_price() const {
+double ticker::avg_price() const {
     return std::accumulate(price_.begin(), price_.end(), 0.0) / price_.size();
 }
 
 
 bool ticker::operator<(const ticker &a) const {
-    return std::tie(this->symbol_, this->date_, this->time_) <
-            std::tie(a.symbol_, a.date_, a.time_);
+    return (symbol_ < a.symbol_) ||
+            ((symbol_ == a.symbol_) && (date_ < a.date_)) ||
+            ((symbol_ == a.symbol_) && (date_ == a.date_) && (time_ < a.time_)) ||
+            ((symbol_ == a.symbol_) && (date_ == a.date_) && (time_ ==  a.time_) && (seconds_ < seconds_));
 }
 
-int ticker::getDate_() const {
+bool ticker::operator==(const ticker &a) const {
+    return ((symbol_ == a.symbol_) && (date_ == a.date_) && (time_ ==  a.time_) && (seconds_ == a.seconds_));
+}
+
+unsigned int ticker::date() const {
     return date_;
 }
 
-int ticker::getTime_() const {
+unsigned int ticker::time() const {
     return time_;
 }
 
-double ticker::getSeconds_() const {
+double ticker::seconds() const {
     return seconds_;
 }
 
-const std::vector<double> &ticker::getPrice_() const {
+const std::vector<double> &ticker::price() const {
     return price_;
 }
 
-const std::string &ticker::getSymbol_() const {
+const std::string &ticker::symbol() const {
     return symbol_;
 }
 
-const std::string ticker::to_string() const {
-    std::string s = "ticker {"+ getSymbol_()
-                    + " date: " + std::to_string(getDate_())
-                    + " time: " + std::to_string(getTime_())
-                    + " seconds: " + std::to_string(getSeconds_())
-                    + " price: " + std::to_string(get_avg_price())
-                    +"}";
-    return s;
-}
-
-std::ostream & operator<<(std::ostream & os, const ticker & tk)  
+std::ostream & operator<<(std::ostream & os, const ticker & tk)
 { 
-    return os << tk.getSymbol_() << ": " << tk.getDate_() << " | " << tk.getTime_() << tk.getSeconds_() << " | " << tk.get_avg_price();  
+    return os << tk.symbol() << " date : " << tk.date() << " | time: " << tk.time() << " | seconds: " << tk.seconds() << " | price: " << tk.avg_price();
 }  

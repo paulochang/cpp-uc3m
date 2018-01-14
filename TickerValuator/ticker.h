@@ -12,34 +12,36 @@ class ticker {
 public:
     ticker(unsigned short d, unsigned short m, unsigned short y, unsigned short h, unsigned short min,
            unsigned short secs, float decimals, std::string symbol, double price);
-    ticker (int date, int time, double seconds, std::string symbol, double price);
+
+    ticker(unsigned int date, unsigned short time, double seconds, std::string symbol, double price);
+
     void add_price(double price);
-    double get_avg_price() const;
+
+    double avg_price() const;
+
     bool operator<(const ticker &a) const;
+    bool operator==(const ticker &a) const;
 
-    int getDate_() const;
+    unsigned int date() const;
 
-    int getTime_() const;
+    unsigned int time() const;
 
-    double getSeconds_() const;
+    double seconds() const;
 
-    const std::vector<double> &getPrice_() const;
+    const std::vector<double> &price() const;
 
-    const std::string &getSymbol_() const;
-
-    const std::string to_string() const;
+    const std::string &symbol() const;
 
 private:
     //Date format is: day-month-year
-    int date_ { 01010001 };
-    int time_ { 0000 };
-    double seconds_{ 0.000000 };
-    std::string symbol_ = "Initial string";
-    std::vector<double> price_ { };
+    unsigned int date_{01010001};
+    unsigned short time_{0000};
+    double seconds_{0.000000};
+    std::string symbol_{"Initial string"};
+    std::vector<double> price_{};
 };
 
-std::ostream & operator<<(std::ostream & os, const ticker & tk);
-
+std::ostream &operator<<(std::ostream &os, const ticker &tk);
 
 
 #endif //TICKERVALUATOR_TICKER_H
