@@ -3,7 +3,7 @@
 #include <fstream>
 #include <stdexcept>
 
-#include "parser.h"
+#include "file_manager.h"
 #include "ticker.h"
 #include "ticker_storage.h"
 
@@ -13,7 +13,7 @@ int main(int argc, char ** argv) {
   
   string input_path;
   string output_path;
-  parser ps = parser();
+  file_manager fm = file_manager();
 
   // Default arguments
   if (argc == 1 ) {
@@ -37,12 +37,11 @@ int main(int argc, char ** argv) {
     if (argv1 == "-i"){
 
       input_path = argv[2];
-      ps.parse_input(true, false, input_path, "");
+      fm.file_reader(input_path);
 
     } else if (argv1 == "-o"){
 
       output_path = argv[2];
-      ps.parse_input(false, true, "", output_path);
 
     } else{
 
