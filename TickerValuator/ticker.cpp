@@ -34,13 +34,13 @@ double ticker::avg_price() const {
 
 bool ticker::operator<(const ticker &a) const {
     return (symbol_ < a.symbol_) ||
-            ((symbol_ == a.symbol_) && (date_ < a.date_)) ||
-            ((symbol_ == a.symbol_) && (date_ == a.date_) && (time_ < a.time_)) ||
-            ((symbol_ == a.symbol_) && (date_ == a.date_) && (time_ ==  a.time_) && (seconds_ < seconds_));
+           ((symbol_ == a.symbol_) && (date_ < a.date_)) ||
+           ((symbol_ == a.symbol_) && (date_ == a.date_) && (time_ < a.time_)) ||
+           ((symbol_ == a.symbol_) && (date_ == a.date_) && (time_ == a.time_) && (seconds_ < seconds_));
 }
 
 bool ticker::operator==(const ticker &a) const {
-    return ((symbol_ == a.symbol_) && (date_ == a.date_) && (time_ ==  a.time_) && (seconds_ == a.seconds_));
+    return ((symbol_ == a.symbol_) && (date_ == a.date_) && (time_ == a.time_) && (seconds_ == a.seconds_));
 }
 
 unsigned int ticker::date() const {
@@ -63,7 +63,7 @@ const std::string &ticker::symbol() const {
     return symbol_;
 }
 
-std::ostream & operator<<(std::ostream & os, const ticker & tk)
-{ 
-    return os << tk.symbol() << " date : " << tk.date() << " | time: " << tk.time() << " | seconds: " << tk.seconds() << " | price: " << tk.avg_price();
+std::ostream &operator<<(std::ostream &os, const ticker &tk) {
+    return os << tk.symbol() << " date_ : " << tk.date() << " | time_: " << tk.time() << " | seconds: " << tk.seconds()
+              << " | price_: " << tk.avg_price();
 }  

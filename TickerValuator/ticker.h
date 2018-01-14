@@ -20,6 +20,7 @@ public:
     double avg_price() const;
 
     bool operator<(const ticker &a) const;
+
     bool operator==(const ticker &a) const;
 
     unsigned int date() const;
