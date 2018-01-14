@@ -27,3 +27,7 @@ void file_manager::file_reader(string input_path){
     else cout << "Unable to open file" << endl; 
 
 }
+
+void file_manager::file_writer(string input_path){
+
+}

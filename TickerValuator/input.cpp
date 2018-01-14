@@ -18,7 +18,7 @@ int main(int argc, char ** argv) {
   // Default arguments
   if (argc == 1 ) {
 
-    cout << "Ingrese cotizaciones de valores: " << endl;
+    cout << "Insert tickers: " << endl;
     
     cin.exceptions(cin.exceptions() | ios_base::failbit);
     ticker tk;
@@ -34,6 +34,8 @@ int main(int argc, char ** argv) {
   } else if (argc == 3){
 
     string argv1 = argv[1];
+
+    // Verify input or output
     if (argv1 == "-i"){
 
       input_path = argv[2];
@@ -42,10 +44,11 @@ int main(int argc, char ** argv) {
     } else if (argv1 == "-o"){
 
       output_path = argv[2];
+      fm.file_writer(output_path);
 
     } else{
 
-      cerr << "Wrong arguments" << endl;
+      cerr << "Wrong arguments, please use -i <filename> or -o <path>" << endl;
       return -1;
 
     }
@@ -59,30 +62,31 @@ int main(int argc, char ** argv) {
     // Set input and output paths
     if (argv1 == "-i"){
 
-      input_path = argv[2];
+      if (argv3 == "-o"){
+
+        input_path = argv[2];
+        output_path = argv[4];
+
+        fm.file_reader(input_path);
+        fm.file_writer(output_path);
+
+      }
 
     } else if (argv1 == "-o"){
 
-      output_path = argv[2];
+      if (argv3 == "-i"){
+
+        input_path = argv[4];
+        output_path = argv[2];
+
+        fm.file_reader(input_path);
+        fm.file_writer(output_path);
+
+      }
 
     } else{
 
-      cerr << "Wrong arguments" << endl;
-      return -1;
-
-    }
-
-    if (argv3 == "-i"){
-
-      input_path = argv[4];
-
-    } else if (argv3 == "-o"){
-
-      output_path = argv[4];
-
-    } else{
-
-      cerr << "Wrong arguments" << endl;
+      cerr << "Wrong arguments, please use -i <filename> and -o <path>" << endl;
       return -1;
 
     }
