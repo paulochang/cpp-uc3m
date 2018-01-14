@@ -15,12 +15,12 @@ class ticker_storage {
 public:
     void add_ticker(ticker myTicker);
     void sort_ticker();
-    void classify();
+    void symbol_classify();
 
     const std::unordered_map<std::string, std::pair<std::__wrap_iter<std::vector<ticker, std::__1::allocator<ticker>>::pointer>, std::__wrap_iter<std::vector<ticker, std::__1::allocator<ticker>>::pointer>>> &
-    getClassifying_map_() const;
+    classifying_map() const;
 
-    const std::vector<ticker> &getTicker_vector_() const;
+    const std::vector<ticker> &ticker_vector() const;
 
 private:
     std::vector<ticker> ticker_vector_;

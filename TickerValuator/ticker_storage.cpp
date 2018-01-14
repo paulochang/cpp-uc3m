@@ -4,23 +4,23 @@
 
 #include "ticker_storage.h"
 
-struct Comp
+struct SymbolComparer
 {
-    bool operator() ( const ticker& s, std::string i )
+    bool operator() ( const ticker& s, const std::string &i )
     {
-        return s.getSymbol_() < i;
+        return s.symbol() < i;
     }
 
-    bool operator() ( std::string i, const ticker& s )
+    bool operator() (const std::string &i, const ticker& s )
     {
-        return i < s.getSymbol_();
+        return i < s.symbol();
     }
 };
 
 void ticker_storage::add_ticker(ticker myTicker) {
     is_sorted = false;
     ticker_vector_.push_back(myTicker);
-    symbol_set_.insert(myTicker.getSymbol_());
+    symbol_set_.insert(myTicker.symbol());
 }
 
 void ticker_storage::sort_ticker() {
@@ -28,19 +28,21 @@ void ticker_storage::sort_ticker() {
     is_sorted = true;
 }
 
-void ticker_storage::classify() {
+void ticker_storage::symbol_classify() {
     if (!is_sorted) sort_ticker();
     for (auto i : symbol_set_) {
-        classifying_map_.insert(make_pair(i,std::equal_range(ticker_vector_.begin(),ticker_vector_.end(),i, Comp())));
+        this->classifying_map_.insert(make_pair(i,std::equal_range(ticker_vector_.begin(),ticker_vector_.end(),i, SymbolComparer())));
     }
     is_classified = true;
 }
 
+
+
 const std::unordered_map<std::string, std::pair<std::__wrap_iter<std::vector<ticker, std::__1::allocator<ticker>>::pointer>, std::__wrap_iter<std::vector<ticker, std::__1::allocator<ticker>>::pointer>>> &
-ticker_storage::getClassifying_map_() const {
-    return classifying_map_;
+ticker_storage::classifying_map() const {
+    return this->classifying_map_;
 }
 
-const std::vector<ticker> &ticker_storage::getTicker_vector_() const {
-    return ticker_vector_;
+const std::vector<ticker> &ticker_storage::ticker_vector() const {
+    return this->ticker_vector_;
 }
