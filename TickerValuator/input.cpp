@@ -5,6 +5,7 @@
 
 #include "parser.h"
 #include "ticker.h"
+#include "ticker_storage.h"
 
 int main(int argc, char ** argv) {
   using namespace std;
@@ -17,7 +18,17 @@ int main(int argc, char ** argv) {
   // Default arguments
   if (argc == 1 ) {
 
-    ps.parse_input(false, false, "", "");
+    cout << "Ingrese cotizaciones de valores: " << endl;
+    
+    cin.exceptions(cin.exceptions() | ios_base::failbit);
+    ticker tk;
+    ticker_storage ts = ticker_storage();
+    
+    while (cin >> tk){
+      ts.add_ticker(tk);
+    }
+
+    ts.sort_ticker();
 
   // One argument, input or output path
   } else if (argc == 3){
