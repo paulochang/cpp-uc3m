@@ -9,6 +9,17 @@
 
 int main() {
     using namespace std;
+
+
+    cout << "Ticker test: ";
+
+    cin.exceptions(cin.exceptions() | ios_base::failbit);
+    ticker tk;
+    cin >> tk;
+
+    cout << "Ticker cout: " << tk << endl;
+
+
     cout << __cplusplus << endl;
 
     ticker_storage ts = ticker_storage();

@@ -5,6 +5,7 @@
 
 #include "parser.h"
 #include "ticker.h"
+#include "ticker_storage.h"
 
 int main(int argc, char ** argv) {
   using namespace std;
@@ -14,51 +15,82 @@ int main(int argc, char ** argv) {
   string output_path;
   parser ps = parser();
 
+  // Default arguments
   if (argc == 1 ) {
-    // Default
-    ps.parse_input(false, false, "", "");
+
+    cout << "Ingrese cotizaciones de valores: " << endl;
+    
+    cin.exceptions(cin.exceptions() | ios_base::failbit);
+    ticker tk;
+    ticker_storage ts = ticker_storage();
+    
+    while (cin >> tk){
+      ts.add_ticker(tk);
+    }
+
+    ts.sort_ticker();
+
+  // One argument, input or output path
   } else if (argc == 3){
-    // input or output
+
     string argv1 = argv[1];
     if (argv1 == "-i"){
-      // set input path
+
       input_path = argv[2];
       ps.parse_input(true, false, input_path, "");
+
     } else if (argv1 == "-o"){
-      // set output path
+
       output_path = argv[2];
+      ps.parse_input(false, true, "", output_path);
+
     } else{
+
       cerr << "Wrong arguments" << endl;
       return -1;
+
     }
+
+  // Both arguments, input and output path
   } else if (argc == 5){
-    // input and output
+
     string argv1 = argv[1];
     string argv3 = argv[3];
 
+    // Set input and output paths
     if (argv1 == "-i"){
-      // set input path
+
       input_path = argv[2];
+
     } else if (argv1 == "-o"){
-      // set output path
+
       output_path = argv[2];
+
     } else{
+
       cerr << "Wrong arguments" << endl;
       return -1;
+
     }
 
     if (argv3 == "-i"){
-      // set input path
+
       input_path = argv[4];
+
     } else if (argv3 == "-o"){
-      // set output path
+
       output_path = argv[4];
+
     } else{
+
       cerr << "Wrong arguments" << endl;
       return -1;
+
     }
 
+  // Error
   } else{
+
       cerr << "Wrong arguments" << endl;
       cerr << "Valid formats: " << endl;
       cerr << "-i <filename>" << endl;
