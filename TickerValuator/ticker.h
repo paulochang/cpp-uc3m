@@ -10,6 +10,7 @@
 
 class ticker {
 public:
+    ticker() {}
     ticker(unsigned short d, unsigned short m, unsigned short y, unsigned short h, unsigned short min,
            unsigned short secs, float decimals, std::string symbol, double price);
     ticker (int date, int time, double seconds, std::string symbol, double price);
