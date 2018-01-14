@@ -4,6 +4,8 @@
 #include <vector>
 #include "ticker.h"
 #include "ticker_storage.h"
+#include "simplified_ticker.h"
+#include "area_utils.h"
 
 int main() {
     using namespace std;
@@ -32,17 +34,47 @@ int main() {
 
 
     std::cout << "Holi: " << a1 << endl;
+
+    std::vector<simplified_ticker> printing_vector;
+    printing_vector.reserve(ts.ticker_vector().size());
+
     std::cout << "ticker classifying map:" << endl;
-
-
     for (auto current_symbol : ts.classifying_map()) {
+
         std::cout << "Current group: " << current_symbol.first << endl;
+
         auto first_ticker_it = current_symbol.second.first;
         auto last_ticker_it = current_symbol.second.second;
+
         auto current_ticker_it = first_ticker_it;
+        bool has_contiguous_neighbor = false;
+        bool is_first = true;
+        auto previous_ticker = current_ticker_it;
+        auto next_ticker = current_ticker_it++;
+        double current_area = 0.0;
+
         while (current_ticker_it != last_ticker_it) {
             std::cout << " " << (*current_ticker_it) << endl;
-            current_ticker_it++;
+            if (is_first) {
+                if (!AreaUtils::isContiguous((*current_ticker_it).seconds(), (*next_ticker).seconds())) {
+                    printing_vector.
+                            push_back(simplified_ticker((*current_ticker_it).date(),
+                                                        (*current_ticker_it).time(),
+                                                        (*current_ticker_it).avg_price()));
+                } else {
+                    current_area = AreaUtils::area(floor((*current_ticker_it).seconds()),
+                                                   (*current_ticker_it).seconds(),
+                                                   (*current_ticker_it).avg_price(),
+                                                   (*current_ticker_it).avg_price());
+                    has_contiguous_neighbor = true;
+                }
+                is_first = false;
+            } else {
+
+            }
+
+            previous_ticker = current_ticker_it;
+            next_ticker = ++current_ticker_it;
         }
     }
 
