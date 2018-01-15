@@ -41,12 +41,7 @@ int main() {
     printing_vector.reserve(ts.ticker_vector().size());
 
     std::cout << "ticker classifying map:" << endl;
-
-    file_manager fm = file_manager();
-
     for (auto current_symbol : ts.classifying_map()) {
-
-        printing_vector.clear();
 
         std::cout << "Current group: " << current_symbol.first << endl;
 
@@ -99,11 +94,54 @@ int main() {
             }
 
         }
+        /*
+        bool has_contiguous_neighbor = false;
+        bool is_first = true;
+        auto previous_ticker = current_ticker_it;
+        auto next_ticker = current_ticker_it+1;
+        double current_area = 0.0;
 
+        while (current_ticker_it != last_ticker_it) {
+            std::cout << " " << (*current_ticker_it) << endl;
+            if (is_first) {
+                if (!AreaUtils::isContiguous((*current_ticker_it).seconds(), (*next_ticker).seconds())) {
+                    printing_vector.
+                            push_back(simplified_ticker((*current_ticker_it).date(),
+                                                        (*current_ticker_it).time(),
+                                                        (*current_ticker_it).avg_price()));
+                } else {
+                    current_area = AreaUtils::area(floor((*current_ticker_it).seconds()),
+                                                   (*current_ticker_it).seconds(),
+                                                   (*current_ticker_it).avg_price(),
+                                                   (*current_ticker_it).avg_price());
+                    has_contiguous_neighbor = true;
+                }
+                is_first = false;
+            } else {
 
-        fm.file_writer(current_symbol.first, printing_vector);
+            }
+
+            previous_ticker = current_ticker_it;
+            next_ticker = ++current_ticker_it;
+
+        }
+
+        */
+
+        //verificar que el siguiente no es el mismo punto
+        // si es el mismo, darle push a los precios y mover el pointer actual al siguiente
+        // si no es mismo, verificar si está en mismo rango
+        // si está en mismo rango,
+        // si tenía vecino,
+        // calcular area con anterior
+        // marcar como vecino
+        // si no es contiguo
 
     }
+
+    file_manager fm = file_manager();
+
+    fm.file_writer("write/", "t%Est", printing_vector);
 
 
     return 0;
