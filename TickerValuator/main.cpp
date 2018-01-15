@@ -141,7 +141,7 @@ int main() {
 
     file_manager fm = file_manager();
 
-    fm.file_writer("write/", printing_vector);
+    fm.file_writer("write/", "t%Est", printing_vector);
 
 
     return 0;
