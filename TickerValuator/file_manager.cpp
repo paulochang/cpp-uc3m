@@ -36,7 +36,13 @@ void file_manager::file_writer(string output_path, string file_name, std::vector
 
     const regex alphanumeric("[^a-z0-9]");
     stringstream result;
-    regex_replace(std::ostream_iterator<char>(result), file_name.begin(), file_name.end(), alphanumeric, "");
+
+    std::string my_string(file_name);
+    for(unsigned int i = 0; i < my_string.length(); ++i) {
+        my_string[i] = tolower(my_string[i]);   
+    }
+
+    regex_replace(std::ostream_iterator<char>(result), my_string.begin(), my_string.end(), alphanumeric, "");
 
     ofstream myfile (output_path+result.str());
 
