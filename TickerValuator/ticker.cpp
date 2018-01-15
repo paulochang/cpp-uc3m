@@ -27,6 +27,10 @@ void ticker::add_price(double price) {
     price_.push_back(price);
 }
 
+void ticker::add_price(std::vector<double> priceVector) {
+    price_.insert(price_.end(), priceVector.begin(), priceVector.end());
+}
+
 double ticker::avg_price() const {
     return std::accumulate(price_.begin(), price_.end(), 0.0) / price_.size();
 }
@@ -47,7 +51,7 @@ unsigned int ticker::date() const {
     return date_;
 }
 
-unsigned int ticker::time() const {
+unsigned short ticker::time() const {
     return time_;
 }
 
