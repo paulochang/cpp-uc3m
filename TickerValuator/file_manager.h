@@ -5,6 +5,7 @@
 
 #include <regex>
 #include <sstream>
+#include <locale>
 
 #include "ticker.h"
 #include "ticker_storage.h"
