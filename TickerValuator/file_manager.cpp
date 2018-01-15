@@ -34,13 +34,12 @@ ticker_storage file_manager::file_reader(string input_path){
 
 void file_manager::file_writer(string output_path, std::vector<simplified_ticker> printing_vector){
 
-    ofstream myfile ("example.txt");
+    ofstream myfile (output_path+"example.txt");
 
     if (myfile.is_open()) {
-        myfile << "This is a line.\n";
-        //myfile << "This is another line.\n";
+
         for (auto stk : printing_vector) {
-            cout << "linea: " << stk << endl;
+            cout << stk << endl;
             myfile << stk << endl;
         }
         myfile.close();
