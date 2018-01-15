@@ -34,7 +34,7 @@ ticker_storage file_manager::file_reader(string input_path){
 
 void file_manager::file_writer(string output_path, string file_name, std::vector<simplified_ticker> printing_vector){
 
-    const regex alphanumeric("[a-z0-9]");
+    const regex alphanumeric("[^a-z0-9]");
     stringstream result;
     regex_replace(std::ostream_iterator<char>(result), file_name.begin(), file_name.end(), alphanumeric, "");
 
