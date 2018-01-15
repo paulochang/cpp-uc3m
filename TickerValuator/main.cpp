@@ -49,10 +49,56 @@ int main() {
         auto last_ticker_it = current_symbol.second.second;
 
         auto current_ticker_it = first_ticker_it;
+
+        auto previous_ticker_it = current_ticker_it;
+        auto next_ticker_it = current_ticker_it + 1;
+
+        double current_area = 0;
+
+        bool previous_in_range = false;
+
+        while (current_ticker_it != last_ticker_it) {
+            ticker current_ticker = (*current_ticker_it);
+            ticker previous_ticker = (*previous_ticker_it);
+            ticker next_ticker = (*next_ticker_it);
+
+            if (current_ticker == next_ticker) {
+                next_ticker.add_price(current_ticker.price());
+                current_ticker_it = next_ticker_it++;
+            } else {
+                if (!previous_in_range) {
+                    current_area += AreaUtils::left_area(
+                            floor(current_ticker.seconds()), current_ticker.seconds(), current_ticker.avg_price(),
+                            current_ticker.avg_price());
+                } else {
+                    current_area += AreaUtils::left_area(
+                            previous_ticker.seconds(), current_ticker.seconds(), previous_ticker.avg_price(),
+                            current_ticker.avg_price());
+                }
+                if (AreaUtils::isContiguous(current_ticker, next_ticker)) {
+                    previous_in_range = true;
+                } else {
+                    current_area += AreaUtils::right_area(
+                            current_ticker.seconds(),
+                            floor(current_ticker.seconds()) + 1,
+                            current_ticker.avg_price(),
+                            current_ticker.avg_price());
+
+                    previous_in_range = false;
+                    printing_vector.push_back(
+                            simplified_ticker(current_ticker.date(), current_ticker.time(), current_area));
+                }
+                previous_ticker_it = current_ticker_it;
+                current_ticker_it++;
+                next_ticker_it = current_ticker_it + 1;
+            }
+
+        }
+        /*
         bool has_contiguous_neighbor = false;
         bool is_first = true;
         auto previous_ticker = current_ticker_it;
-        auto next_ticker = current_ticker_it++;
+        auto next_ticker = current_ticker_it+1;
         double current_area = 0.0;
 
         while (current_ticker_it != last_ticker_it) {
@@ -77,7 +123,20 @@ int main() {
 
             previous_ticker = current_ticker_it;
             next_ticker = ++current_ticker_it;
+
         }
+
+        */
+
+        //verificar que el siguiente no es el mismo punto
+        // si es el mismo, darle push a los precios y mover el pointer actual al siguiente
+        // si no es mismo, verificar si está en mismo rango
+        // si está en mismo rango,
+        // si tenía vecino,
+        // calcular area con anterior
+        // marcar como vecino
+        // si no es contiguo
+
     }
 
     file_manager fm = file_manager();

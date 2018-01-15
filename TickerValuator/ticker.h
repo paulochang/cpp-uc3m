@@ -18,6 +18,8 @@ public:
 
     void add_price(double price);
 
+    void add_price(std::vector<double> priceVector);
+
     double avg_price() const;
 
     bool operator<(const ticker &a) const;
@@ -26,7 +28,7 @@ public:
 
     unsigned int date() const;
 
-    unsigned int time() const;
+    unsigned short time() const;
 
     double seconds() const;
 
