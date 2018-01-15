@@ -4,9 +4,11 @@
 using namespace std;
 
 
-void file_manager::file_reader(string input_path){
+ticker_storage file_manager::file_reader(string input_path){
 
     string line;
+    ticker_storage ts = ticker_storage();
+
     ifstream myfile (input_path);
 
     // Open file
@@ -15,19 +17,35 @@ void file_manager::file_reader(string input_path){
         cin.exceptions(cin.exceptions() | ios_base::failbit);
 
         ticker tk;
-        ticker_storage ts = ticker_storage();
 
         while ( myfile >> tk){
             cout << "Ticker cout: " << tk << endl;
             ts.add_ticker(tk);
         }
         myfile.close();
+
     }
 
-    else cout << "Unable to open file" << endl; 
+    else cout << "Unable to open file " << input_path << endl;
+    
+    return ts;
 
 }
 
-void file_manager::file_writer(string input_path){
+void file_manager::file_writer(string output_path, std::vector<simplified_ticker> printing_vector){
+
+    ofstream myfile ("example.txt");
+
+    if (myfile.is_open()) {
+        myfile << "This is a line.\n";
+        //myfile << "This is another line.\n";
+        for (auto stk : printing_vector) {
+            cout << "linea: " << stk << endl;
+            myfile << stk << endl;
+        }
+        myfile.close();
+    }
+
+    else cout << "Unable to create file " << output_path << endl;    
 
 }

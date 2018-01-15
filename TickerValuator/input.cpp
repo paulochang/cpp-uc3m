@@ -44,7 +44,7 @@ int main(int argc, char ** argv) {
     } else if (argv1 == "-o"){
 
       output_path = argv[2];
-      fm.file_writer(output_path);
+      //fm.file_writer(output_path);
 
     } else{
 
@@ -68,7 +68,7 @@ int main(int argc, char ** argv) {
         output_path = argv[4];
 
         fm.file_reader(input_path);
-        fm.file_writer(output_path);
+        //fm.file_writer(output_path);
 
       }
 
@@ -80,7 +80,7 @@ int main(int argc, char ** argv) {
         output_path = argv[2];
 
         fm.file_reader(input_path);
-        fm.file_writer(output_path);
+        //fm.file_writer(output_path);
 
       }
 

@@ -6,19 +6,10 @@
 #include "ticker_storage.h"
 #include "simplified_ticker.h"
 #include "area_utils.h"
+#include "file_manager.h"
 
 int main() {
     using namespace std;
-
-
-    cout << "Ticker test: ";
-
-    cin.exceptions(cin.exceptions() | ios_base::failbit);
-    ticker tk;
-    cin >> tk;
-
-    cout << "Ticker cout: " << tk << endl;
-
 
     cout << __cplusplus << endl;
 
@@ -88,6 +79,10 @@ int main() {
             next_ticker = ++current_ticker_it;
         }
     }
+
+    file_manager fm = file_manager();
+
+    fm.file_writer("write/", printing_vector);
 
 
     return 0;
