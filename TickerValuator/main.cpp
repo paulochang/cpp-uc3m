@@ -2,18 +2,118 @@
 #include <string>
 #include <algorithm>
 #include <vector>
+#include <fstream>
+#include <stdexcept>
+
 #include "ticker.h"
 #include "ticker_storage.h"
 #include "simplified_ticker.h"
 #include "area_utils.h"
 #include "file_manager.h"
 
-int main() {
+
+int main(int argc, char ** argv) {
     using namespace std;
+
+    string input_path;
+    string output_path;
+    file_manager fm = file_manager();
+
+    // Default arguments
+    if (argc == 1 ) {
+
+        cout << "Insert tickers: " << endl;
+        
+        cin.exceptions(cin.exceptions() | ios_base::failbit);
+        ticker tk;
+        ticker_storage ts = ticker_storage();
+        
+        while (cin >> tk){
+            ts.add_ticker(tk);
+        }
+
+        ts.sort_ticker();
+
+    // One argument, input or output path
+    } else if (argc == 3){
+
+        string argv1 = argv[1];
+
+        // Verify input or output
+        if (argv1 == "-i"){
+
+        input_path = argv[2];
+        fm.file_reader(input_path);
+
+        } else if (argv1 == "-o"){
+
+        output_path = argv[2];
+        //fm.file_writer(output_path);
+
+        } else{
+
+        cerr << "Wrong arguments, please use -i <filename> or -o <path>" << endl;
+        return -1;
+
+        }
+
+    // Both arguments, input and output path
+    } else if (argc == 5){
+
+        string argv1 = argv[1];
+        string argv3 = argv[3];
+
+        // Set input and output paths
+        if (argv1 == "-i"){
+
+        if (argv3 == "-o"){
+
+            input_path = argv[2];
+            output_path = argv[4];
+
+            fm.file_reader(input_path);
+            //fm.file_writer(output_path);
+
+        }
+
+        } else if (argv1 == "-o"){
+
+        if (argv3 == "-i"){
+
+            input_path = argv[4];
+            output_path = argv[2];
+
+            fm.file_reader(input_path);
+            //fm.file_writer(output_path);
+
+        }
+
+        } else{
+
+        cerr << "Wrong arguments, please use -i <filename> and -o <path>" << endl;
+        return -1;
+
+        }
+
+    // Error
+    } else{
+
+        cerr << "Wrong arguments" << endl;
+        cerr << "Valid formats: " << endl;
+        cerr << "-i <filename>" << endl;
+        cerr << "-o <path>" << endl;
+        cerr << "-i <filename> -o <path>" << endl;
+        return -1;
+    }
+
+
 
     cout << __cplusplus << endl;
 
+    
     ticker_storage ts = ticker_storage();
+    
+    /*
     ticker a1 = ticker(1012001, 1200, 23.3242, "APPL", 803.20);
     ticker a2 = ticker(1012000, 1200, 23.3242, "APPL", 803.20);
     ticker a3 = ticker(1012000, 1201, 23.3242, "APPL", 803.20);
@@ -26,6 +126,7 @@ int main() {
     ts.add_ticker(a4);
     ts.add_ticker(a3);
     ts.add_ticker(g1);
+    */
 
     std::cout << "Sorted ticker vector:" << endl;
     for (const auto &i: ts.ticker_vector()) {
@@ -33,9 +134,6 @@ int main() {
     }
 
     ts.symbol_classify();
-
-
-    std::cout << "Holi: " << a1 << endl;
 
     std::vector<simplified_ticker> printing_vector;
     printing_vector.reserve(ts.ticker_vector().size());
@@ -138,11 +236,4 @@ int main() {
         // si no es contiguo
 
     }
-
-    file_manager fm = file_manager();
-
-    fm.file_writer("write/", "tEst", printing_vector);
-
-
-    return 0;
 }
