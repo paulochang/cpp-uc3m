@@ -1,9 +1,6 @@
 #include <iostream>
-#include <string>
-#include <algorithm>
 #include <vector>
 #include <fstream>
-#include <stdexcept>
 
 #include "ticker.h"
 #include "ticker_storage.h"
@@ -12,137 +9,119 @@
 #include "file_manager.h"
 
 
-int main(int argc, char ** argv) {
+bool manual_ticker_insertion();
+
+/// Manual ticker insertion
+/// \param ts a ticker_storage object
+/// \return true if at least one ticker was inserted
+bool manual_ticker_insertion(ticker_storage ts) {
+
+    cout << "Insert tickers: " << endl;
+
+    cin.exceptions(cin.exceptions() | ios_base::failbit);
+    ticker tk;
+
+    while (cin >> tk) {
+        ts.add_ticker(tk);
+    }
+
+    return ts.ticker_vector().size() > 0;
+}
+
+bool set_input_arg(char **argv, std::string &filename, std::string &output_path, int order) {
+    string current_flag = argv[order];
+
+    //Choose path type
+    if (current_flag == "-i") {
+
+        filename = argv[order * 2 + 1];
+        return true;
+
+    } else if (current_flag == "-o") {
+
+        output_path = argv[order * 2 + 1];
+        return true;
+
+    } else {
+        cerr << "Wrong arguments, please use -i <filename> or -o <path>" << endl;
+        return false;
+
+    }
+}
+
+int main(int argc, char **argv) {
     using namespace std;
 
-    string input_path;
+    string filename;
     string output_path;
     file_manager fm = file_manager();
 
-    // Default arguments
-    if (argc == 1 ) {
-
-        cout << "Insert tickers: " << endl;
-        
-        cin.exceptions(cin.exceptions() | ios_base::failbit);
-        ticker tk;
-        ticker_storage ts = ticker_storage();
-        
-        while (cin >> tk){
-            ts.add_ticker(tk);
-        }
-
-        ts.sort_ticker();
-
-    // One argument, input or output path
-    } else if (argc == 3){
-
-        string argv1 = argv[1];
-
-        // Verify input or output
-        if (argv1 == "-i"){
-
-        input_path = argv[2];
-        fm.file_reader(input_path);
-
-        } else if (argv1 == "-o"){
-
-        output_path = argv[2];
-        //fm.file_writer(output_path);
-
-        } else{
-
-        cerr << "Wrong arguments, please use -i <filename> or -o <path>" << endl;
-        return -1;
-
-        }
-
-    // Both arguments, input and output path
-    } else if (argc == 5){
-
-        string argv1 = argv[1];
-        string argv3 = argv[3];
-
-        // Set input and output paths
-        if (argv1 == "-i"){
-
-        if (argv3 == "-o"){
-
-            input_path = argv[2];
-            output_path = argv[4];
-
-            fm.file_reader(input_path);
-            //fm.file_writer(output_path);
-
-        }
-
-        } else if (argv1 == "-o"){
-
-        if (argv3 == "-i"){
-
-            input_path = argv[4];
-            output_path = argv[2];
-
-            fm.file_reader(input_path);
-            //fm.file_writer(output_path);
-
-        }
-
-        } else{
-
-        cerr << "Wrong arguments, please use -i <filename> and -o <path>" << endl;
-        return -1;
-
-        }
-
-    // Error
-    } else{
-
-        cerr << "Wrong arguments" << endl;
-        cerr << "Valid formats: " << endl;
-        cerr << "-i <filename>" << endl;
-        cerr << "-o <path>" << endl;
-        cerr << "-i <filename> -o <path>" << endl;
-        return -1;
-    }
-
-
-
-    cout << __cplusplus << endl;
-
-    
+    // INITIALIZE TICKER_STORAGE
     ticker_storage ts = ticker_storage();
-    
-    /*
-    ticker a1 = ticker(1012001, 1200, 23.3242, "APPL", 803.20);
-    ticker a2 = ticker(1012000, 1200, 23.3242, "APPL", 803.20);
-    ticker a3 = ticker(1012000, 1201, 23.3242, "APPL", 803.20);
-    ticker a4 = ticker(1012000, 1202, 23.3242, "APPL", 803.20);
-    ticker a5 = ticker(1012000, 1202, 23.3042, "APPL", 803.20);
-    ticker g1 = ticker(1012000, 1200, 23.3242, "GOOGL", 803.20);
-    ts.add_ticker(a1);
-    ts.add_ticker(a2);
-    ts.add_ticker(a5);
-    ts.add_ticker(a4);
-    ts.add_ticker(a3);
-    ts.add_ticker(g1);
-    */
 
+    //region **Argument Handling**
+    // Handle different arg numbers
+    switch (argc) {
+        // no arguments
+        case 1 : {
+            manual_ticker_insertion(ts);
+            break;
+        }
+            // one argument
+        case 3 : {
+            set_input_arg(argv, filename, output_path, 0);
+            fm.file_reader(filename);
+            break;
+        }
+            // two arguments
+        case 5 : {
+            set_input_arg(argv, filename, output_path, 0);
+            set_input_arg(argv, filename, output_path, 1);
+            fm.file_reader(filename);
+            break;
+        }
+            // invalid argument nr.
+        default: {
+            cerr << "Wrong arguments" << endl;
+            cerr << "Valid formats: " << endl;
+            cerr << "-i <filename>" << endl;
+            cerr << "-o <path>" << endl;
+            cerr << "-i <filename> -o <path>" << endl;
+            return -1;
+        }
+    }
+    //endregion
+
+    // ** Process Ticker List **
+    // 1. Sort ticker based on symbol, date and time
+    ts.sort_ticker();
+
+    //region DEBUG - DISPLAY SORTED VECTOR
+    /*
     std::cout << "Sorted ticker vector:" << endl;
     for (const auto &i: ts.ticker_vector()) {
         std::cout << i << endl;
     }
+     */
+    //endregion
 
+    // 2. Classify based on symbol
+    // Final structure is:
+    // Map<Symbol, { beginning iterator, end iterator } >
     ts.symbol_classify();
 
+    // 3. Initialize vector to print ticker's
     std::vector<simplified_ticker> printing_vector;
     printing_vector.reserve(ts.ticker_vector().size());
 
-    std::cout << "ticker classifying map:" << endl;
+    //region DEBUG - TICKER CLASSIFYING MAP
+    //std::cout << "ticker classifying map:" << endl;
+    //endregion
+    // For each asset...
     for (auto current_symbol : ts.classifying_map()) {
-
-        std::cout << "Current group: " << current_symbol.first << endl;
-
+        //region DEBUG - DISPLAY CURRENT GROUP
+        //std::cout << "Current group: " << current_symbol.first << endl;
+        //endregion
         auto first_ticker_it = current_symbol.second.first;
         auto last_ticker_it = current_symbol.second.second;
 
@@ -192,48 +171,6 @@ int main(int argc, char ** argv) {
             }
 
         }
-        /*
-        bool has_contiguous_neighbor = false;
-        bool is_first = true;
-        auto previous_ticker = current_ticker_it;
-        auto next_ticker = current_ticker_it+1;
-        double current_area = 0.0;
-
-        while (current_ticker_it != last_ticker_it) {
-            std::cout << " " << (*current_ticker_it) << endl;
-            if (is_first) {
-                if (!AreaUtils::isContiguous((*current_ticker_it).seconds(), (*next_ticker).seconds())) {
-                    printing_vector.
-                            push_back(simplified_ticker((*current_ticker_it).date(),
-                                                        (*current_ticker_it).time(),
-                                                        (*current_ticker_it).avg_price()));
-                } else {
-                    current_area = AreaUtils::area(floor((*current_ticker_it).seconds()),
-                                                   (*current_ticker_it).seconds(),
-                                                   (*current_ticker_it).avg_price(),
-                                                   (*current_ticker_it).avg_price());
-                    has_contiguous_neighbor = true;
-                }
-                is_first = false;
-            } else {
-
-            }
-
-            previous_ticker = current_ticker_it;
-            next_ticker = ++current_ticker_it;
-
-        }
-
-        */
-
-        //verificar que el siguiente no es el mismo punto
-        // si es el mismo, darle push a los precios y mover el pointer actual al siguiente
-        // si no es mismo, verificar si está en mismo rango
-        // si está en mismo rango,
-        // si tenía vecino,
-        // calcular area con anterior
-        // marcar como vecino
-        // si no es contiguo
 
     }
 }
