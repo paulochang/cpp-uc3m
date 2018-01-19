@@ -27,10 +27,19 @@ std::ostream & operator<<(std::ostream & os, const simplified_ticker &stk) {
 
     using namespace std;
 
-    string date_str = to_string(stk.date());
-    string time_str = to_string(stk.time());
-    int date_length = date_str.length();
-    int time_length = time_str.length();
+    unsigned int date = stk.date();
     
-    return os << date_str.substr(0,date_length-6) << "-" << date_str.substr(date_length-6,2) << "-" << date_str.substr(date_length-2,2) << " " << time_str.substr(0,time_length-2) << ":" << time_str.substr(time_length-2,2) << " " << stk.price();  
+    unsigned short year = date/10000;
+    date -= year*10000;
+
+    unsigned short month = date/100;
+    date -= month*100;
+
+    unsigned int time = stk.time();
+
+    unsigned short hour = time/100;
+    time -= hour*100;
+
+    return os << to_string(date)+"-"+to_string(month)+"-"+to_string(year)+" "+to_string(hour)+":"+to_string(time)+" "+to_string(stk.price());
+    
 }
