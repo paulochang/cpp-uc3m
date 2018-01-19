@@ -9,8 +9,6 @@
 #include "file_manager.h"
 
 
-bool manual_ticker_insertion();
-
 /// Manual ticker insertion
 /// \param ts a ticker_storage object
 /// \return true if at least one ticker was inserted
@@ -28,7 +26,7 @@ bool manual_ticker_insertion(ticker_storage ts) {
     return ts.ticker_vector().size() > 0;
 }
 
-bool set_input_arg(char **argv, std::string &filename, std::string &output_path, int order) {
+bool set_input_arg(char **argv, std::string &filename, std::string &output_path, const int order) {
     string current_flag = argv[order];
 
     //Choose path type
@@ -46,6 +44,112 @@ bool set_input_arg(char **argv, std::string &filename, std::string &output_path,
         cerr << "Wrong arguments, please use -i <filename> or -o <path>" << endl;
         return false;
 
+    }
+}
+
+
+std::vector<simplified_ticker> get_print_ready_vector(unsigned long max_size,
+                                                      const __wrap_iter<vector<ticker, std::__1::allocator<ticker>>::pointer> &first_ticker_it,
+                                                      const __wrap_iter<vector<ticker, std::__1::allocator<ticker>>::pointer> &last_ticker_it) {
+    vector<simplified_ticker> printing_vector;
+    printing_vector.reserve(max_size);
+    // current ticker will represent the currently evaluated ticker
+    auto current_ticker_it = first_ticker_it;
+
+    // a pointer to the next ticker and the previous is kept for reference
+    auto previous_ticker_it = current_ticker_it;
+    auto next_ticker_it = current_ticker_it + 1;
+
+    // this will be the area cummulative variable
+    double current_area = 0;
+    // this flag is true when the previous ticker was within the same timeframe
+    bool previous_in_range = false;
+
+    //1. iterate through tickers
+    while (current_ticker_it != last_ticker_it) {
+        ticker current_ticker = (*current_ticker_it);
+        ticker previous_ticker = (*previous_ticker_it);
+        ticker next_ticker = (*next_ticker_it);
+
+        // CASE1: next ticker has same timestamp (and symbol) as previous
+        if (current_ticker == next_ticker) {
+            // Add price to pricing set (this will average later)
+            next_ticker.add_price(current_ticker.price());
+            current_ticker_it = next_ticker_it++;
+        } else {
+
+            //CASE2: next ticker has different timestamp as previous
+            // Area creation has two parts:
+
+            //region ** Area to the left calculation **
+            if (!previous_in_range) {
+                //CASE 2.1: previous ticker was in different minute timeframe
+
+                // Since previous ticker was not in the same minute timeframe, this is the first ticker
+                // therefore, calculate area to the left pretending lower bound has same price and keep going
+                current_area += AreaUtils::left_area(
+                        floor(current_ticker.seconds()), current_ticker.seconds(), current_ticker.avg_price(),
+                        current_ticker.avg_price());
+            } else {
+                //CASE 2.2: previous ticker was in same minute timeframe
+
+                // Otherwise, calculate area to the left with the previous ticker price and keep going
+                current_area += AreaUtils::left_area(
+                        previous_ticker.seconds(), current_ticker.seconds(), previous_ticker.avg_price(),
+                        current_ticker.avg_price());
+            }
+            //endregion
+
+            //region ** Area to the right calculation **
+            if (next_ticker_it != last_ticker_it && AreaUtils::isContiguous(current_ticker, next_ticker)) {
+                //CASE 2.a: if there is at least one remaining ticker
+                // AND it's in the same timeframe as current one
+                // enable previous_in_range flag
+                previous_in_range = true;
+            } else {
+                //CASE 2.b: if not, just assume limit of timeframe has the same value and sum up area.
+                current_area += AreaUtils::right_area(
+                        current_ticker.seconds(),
+                        floor(current_ticker.seconds()) + 1,
+                        current_ticker.avg_price(),
+                        current_ticker.avg_price());
+
+                // reset area summation and flags, send to printer
+                previous_in_range = false;
+                printing_vector.push_back(
+                        simplified_ticker(current_ticker.date(), current_ticker.time(), current_area));
+                current_area = 0;
+            }
+            //endregion
+
+            // recalculate iterators
+            previous_ticker_it = current_ticker_it;
+            current_ticker_it++;
+            // prevent weird iterator bugs...
+            if (current_ticker_it != last_ticker_it) {
+                next_ticker_it = current_ticker_it + 1;
+            }
+        }
+
+    }
+    return printing_vector;
+}
+
+void print_processed_list(const ticker_storage &ts, const file_manager fm) {
+
+
+    unsigned long max_size = ts.ticker_vector().size();
+
+
+    // For each asset...
+    for (auto current_symbol : ts.classifying_map()) {
+
+        auto first_ticker_it = current_symbol.second.first;
+        auto last_ticker_it = current_symbol.second.second;
+
+        std::vector<simplified_ticker> printing_vector = get_print_ready_vector(max_size, first_ticker_it,
+                                                                                last_ticker_it);
+        fm.file_writer("", current_symbol.first, printing_vector);
     }
 }
 
@@ -111,66 +215,11 @@ int main(int argc, char **argv) {
     ts.symbol_classify();
 
     // 3. Initialize vector to print ticker's
-    std::vector<simplified_ticker> printing_vector;
-    printing_vector.reserve(ts.ticker_vector().size());
 
+    // 4. calculate areas
     //region DEBUG - TICKER CLASSIFYING MAP
     //std::cout << "ticker classifying map:" << endl;
     //endregion
-    // For each asset...
-    for (auto current_symbol : ts.classifying_map()) {
-        //region DEBUG - DISPLAY CURRENT GROUP
-        //std::cout << "Current group: " << current_symbol.first << endl;
-        //endregion
-        auto first_ticker_it = current_symbol.second.first;
-        auto last_ticker_it = current_symbol.second.second;
 
-        auto current_ticker_it = first_ticker_it;
-
-        auto previous_ticker_it = current_ticker_it;
-        auto next_ticker_it = current_ticker_it + 1;
-
-        double current_area = 0;
-
-        bool previous_in_range = false;
-
-        while (current_ticker_it != last_ticker_it) {
-            ticker current_ticker = (*current_ticker_it);
-            ticker previous_ticker = (*previous_ticker_it);
-            ticker next_ticker = (*next_ticker_it);
-
-            if (current_ticker == next_ticker) {
-                next_ticker.add_price(current_ticker.price());
-                current_ticker_it = next_ticker_it++;
-            } else {
-                if (!previous_in_range) {
-                    current_area += AreaUtils::left_area(
-                            floor(current_ticker.seconds()), current_ticker.seconds(), current_ticker.avg_price(),
-                            current_ticker.avg_price());
-                } else {
-                    current_area += AreaUtils::left_area(
-                            previous_ticker.seconds(), current_ticker.seconds(), previous_ticker.avg_price(),
-                            current_ticker.avg_price());
-                }
-                if (AreaUtils::isContiguous(current_ticker, next_ticker)) {
-                    previous_in_range = true;
-                } else {
-                    current_area += AreaUtils::right_area(
-                            current_ticker.seconds(),
-                            floor(current_ticker.seconds()) + 1,
-                            current_ticker.avg_price(),
-                            current_ticker.avg_price());
-
-                    previous_in_range = false;
-                    printing_vector.push_back(
-                            simplified_ticker(current_ticker.date(), current_ticker.time(), current_area));
-                }
-                previous_ticker_it = current_ticker_it;
-                current_ticker_it++;
-                next_ticker_it = current_ticker_it + 1;
-            }
-
-        }
-
-    }
+    print_processed_list(ts, fm);
 }
