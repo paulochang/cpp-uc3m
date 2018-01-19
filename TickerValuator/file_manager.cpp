@@ -19,7 +19,8 @@ ticker_storage file_manager::file_reader(string input_path){
         ticker tk;
 
         while ( myfile >> tk){
-            cout << "Ticker cout: " << tk << endl;
+            // DEBUG
+            // cout << "Ticker cout: " << tk << endl;
             ts.add_ticker(tk);
         }
         myfile.close();
@@ -44,12 +45,12 @@ void file_manager::file_writer(const string output_path, const string file_name,
     my_string.erase(std::remove_if(my_string.begin(), my_string.end(), [](char c) { return !std::isalnum(c); }),
                     my_string.end());
 
-    ofstream myfile (output_path+result.str());
+    ofstream myfile (output_path+my_string+".txt");
 
     if (myfile.is_open()) {
 
         for (auto stk : printing_vector) {
-            cout << stk << endl;
+            //cout << stk << endl;
             myfile << stk << endl;
         }
         myfile.close();
