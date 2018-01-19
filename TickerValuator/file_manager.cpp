@@ -32,17 +32,17 @@ ticker_storage file_manager::file_reader(string input_path){
 
 }
 
-void file_manager::file_writer(string output_path, string file_name, std::vector<simplified_ticker> printing_vector){
+void file_manager::file_writer(const string output_path, const string file_name,
+                               const std::vector<simplified_ticker> printing_vector) const {
 
-    const regex alphanumeric("[^a-z0-9]");
     stringstream result;
 
     std::string my_string(file_name);
-    for(unsigned int i = 0; i < my_string.length(); ++i) {
-        my_string[i] = tolower(my_string[i]);   
-    }
 
-    regex_replace(std::ostream_iterator<char>(result), my_string.begin(), my_string.end(), alphanumeric, "");
+    // Uses STL to transform string and apply STL toupper function
+    transform(my_string.begin(), my_string.end(), my_string.begin(), ::toupper);
+    my_string.erase(std::remove_if(my_string.begin(), my_string.end(), [](char c) { return !std::isalnum(c); }),
+                    my_string.end());
 
     ofstream myfile (output_path+result.str());
 
