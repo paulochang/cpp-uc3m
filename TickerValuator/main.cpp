@@ -10,12 +10,12 @@
 
 
 /// Manual ticker insertion
-/// \param ts a ticker_storage object
-/// \return true if at least one ticker was inserted
-bool manual_ticker_insertion(ticker_storage ts) {
+/// \return ts a ticker_storage object
+ticker_storage manual_ticker_insertion() {
 
     cout << "Insert tickers: " << endl;
 
+    ticker_storage ts;
     cin.exceptions(cin.exceptions() | ios_base::failbit);
     ticker tk;
 
@@ -23,21 +23,22 @@ bool manual_ticker_insertion(ticker_storage ts) {
         ts.add_ticker(tk);
     }
 
-    return ts.ticker_vector().size() > 0;
+    return ts;
 }
 
 bool set_input_arg(char **argv, std::string &filename, std::string &output_path, const int order) {
-    string current_flag = argv[order];
+    const int index = order*2+1;
+    string current_flag = argv[index];
 
     //Choose path type
     if (current_flag == "-i") {
 
-        filename = argv[order * 2 + 1];
+        filename = argv[index+1];
         return true;
 
     } else if (current_flag == "-o") {
 
-        output_path = argv[order * 2 + 1];
+        output_path = argv[index+1];
         return true;
 
     } else {
@@ -135,7 +136,7 @@ std::vector<simplified_ticker> get_print_ready_vector(unsigned long max_size,
     return printing_vector;
 }
 
-void print_processed_list(const ticker_storage &ts, const file_manager fm) {
+void print_processed_list(const string output, const ticker_storage &ts, const file_manager fm) {
 
 
     unsigned long max_size = ts.ticker_vector().size();
@@ -149,7 +150,7 @@ void print_processed_list(const ticker_storage &ts, const file_manager fm) {
 
         std::vector<simplified_ticker> printing_vector = get_print_ready_vector(max_size, first_ticker_it,
                                                                                 last_ticker_it);
-        fm.file_writer("", current_symbol.first, printing_vector);
+        fm.file_writer(output, current_symbol.first, printing_vector);
     }
 }
 
@@ -157,7 +158,7 @@ int main(int argc, char **argv) {
     using namespace std;
 
     string filename;
-    string output_path;
+    string output_path = "";
     file_manager fm = file_manager();
 
     // INITIALIZE TICKER_STORAGE
@@ -168,20 +169,17 @@ int main(int argc, char **argv) {
     switch (argc) {
         // no arguments
         case 1 : {
-            manual_ticker_insertion(ts);
             break;
         }
             // one argument
         case 3 : {
             set_input_arg(argv, filename, output_path, 0);
-            fm.file_reader(filename);
             break;
         }
             // two arguments
         case 5 : {
             set_input_arg(argv, filename, output_path, 0);
             set_input_arg(argv, filename, output_path, 1);
-            fm.file_reader(filename);
             break;
         }
             // invalid argument nr.
@@ -195,6 +193,12 @@ int main(int argc, char **argv) {
         }
     }
     //endregion
+
+    if (filename.empty()){
+        ts = manual_ticker_insertion();
+    } else {
+        ts = fm.file_reader(filename);
+    }
 
     // ** Process Ticker List **
     // 1. Sort ticker based on symbol, date and time
@@ -221,5 +225,5 @@ int main(int argc, char **argv) {
     //std::cout << "ticker classifying map:" << endl;
     //endregion
 
-    print_processed_list(ts, fm);
+    print_processed_list(output_path, ts, fm);
 }
