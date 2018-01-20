@@ -23,11 +23,15 @@ double simplified_ticker::price() const {
     return price_;
 }
 
-std::ostream & operator<<(std::ostream & os, const simplified_ticker &stk) {
+void simplified_ticker::write(fmt::MemoryWriter &out) {
 
     using namespace std;
 
-    unsigned int date = stk.date();
+    int max_days [12] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    char output [50];
+    bool leap_year = false;
+
+    unsigned int date = date_;
     
     unsigned short year = date/10000;
     date -= year*10000;
@@ -35,11 +39,33 @@ std::ostream & operator<<(std::ostream & os, const simplified_ticker &stk) {
     unsigned short month = date/100;
     date -= month*100;
 
-    unsigned int time = stk.time();
+    unsigned int time = time_;
 
     unsigned short hour = time/100;
     time -= hour*100;
 
-    return os << to_string(date)+"-"+to_string(month)+"-"+to_string(year)+" "+to_string(hour)+":"+to_string(time)+" "+to_string(stk.price());
+    if (time_ > 2359 or time_%100 > 59){
+        cerr << fmt::format("Invalid value for time: {:02d}:{:02d}\n", hour, time);
+    }
+
+    if (month > 12 or date > max_days[month-1]){
+        cerr << fmt::format("Invalid value for date: {:02d}-{:02d}-{:02d}\n", date, month, year);
+    }
+
+    if (month == 2){
+        if (year%4 != 0){
+            leap_year = false;
+        } else if (year%100 != 0){
+            leap_year = true;
+        } else if (year%400 != 0){
+            leap_year = false;
+        }
+
+        if (date == 29 and !leap_year){
+            cerr << fmt::format("Invalid leap year:: {:02d}-{:02d}-{:02d}\n", date, month, year);
+        }
+    }
     
+
+    out.write("{:02d}-{:02d}-{:02d} {:02d}:{:02d} {:.2f}\n", date, month, year, hour, time, price_);
 }
