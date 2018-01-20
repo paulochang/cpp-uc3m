@@ -7,6 +7,7 @@
 #include "simplified_ticker.h"
 #include "area_utils.h"
 #include "file_manager.h"
+#include <dirent.h>
 
 
 /// Manual ticker insertion
@@ -193,6 +194,16 @@ int main(int argc, char **argv) {
         }
     }
     //endregion
+
+    if (output_path != ""){
+        
+        DIR* dir = opendir(output_path.c_str());
+        if (dir) {
+            closedir(dir);
+        } else{
+            cerr << "Directory " << output_path << " does not exist." << endl;
+        }
+    }
 
     if (filename.empty()){
         ts = manual_ticker_insertion();
