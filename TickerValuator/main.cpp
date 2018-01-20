@@ -164,6 +164,9 @@ int main(int argc, char **argv) {
 
     using namespace std;
 
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
+
     string filename;
     string output_path = "";
     file_manager fm = file_manager();
