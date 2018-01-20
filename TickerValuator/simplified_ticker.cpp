@@ -23,11 +23,11 @@ double simplified_ticker::price() const {
     return price_;
 }
 
-std::ostream & operator<<(std::ostream & os, const simplified_ticker &stk) {
+void simplified_ticker::write(fmt::MemoryWriter &out) {
 
     using namespace std;
 
-    unsigned int date = stk.date();
+    unsigned int date = date_;
     
     unsigned short year = date/10000;
     date -= year*10000;
@@ -35,11 +35,10 @@ std::ostream & operator<<(std::ostream & os, const simplified_ticker &stk) {
     unsigned short month = date/100;
     date -= month*100;
 
-    unsigned int time = stk.time();
+    unsigned int my_time = time_;
 
-    unsigned short hour = time/100;
-    time -= hour*100;
+    unsigned short hour = my_time / 100;
+    my_time -= hour * 100;
 
-    return os << to_string(date)+"-"+to_string(month)+"-"+to_string(year)+" "+to_string(hour)+":"+to_string(time)+" "+to_string(stk.price());
-    
+    out.write("{:02d}-{:02d}-{:02d} {:02d}:{:02d} {:.2f}\n", date, month, year, hour, my_time, price_);
 }
