@@ -6,6 +6,8 @@
 #define TICKERVALUATOR_SIMPLIFIED_TICKER_H
 
 #include <string>
+#include "fmt/format.h"
+
 
 class simplified_ticker {
 public:
@@ -18,14 +20,12 @@ public:
 
     double price() const;
 
+    void write(fmt::MemoryWriter &out);
+
 private:
     unsigned int date_;
     unsigned short time_;
     double price_;
 };
-
-
-
-std::ostream &operator<<(std::ostream &os, const simplified_ticker &stk);
 
 #endif //TICKERVALUATOR_SIMPLIFIED_TICKER_H
