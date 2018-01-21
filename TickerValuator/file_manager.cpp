@@ -1,5 +1,6 @@
 
 #include "file_manager.h"
+#include "fmt/format.h"
 
 using namespace std;
 
@@ -47,12 +48,16 @@ void file_manager::file_writer(const string output_path, const string file_name,
 
     ofstream myfile (output_path+my_string+".txt");
 
+    fmt::MemoryWriter writer;
+
     if (myfile.is_open()) {
 
         for (auto stk : printing_vector) {
-            //cout << stk << endl;
-            myfile << stk << endl;
+
+            stk.write(writer);
+        
         }
+        myfile << writer.c_str();
         myfile.close();
     }
 

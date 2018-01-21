@@ -41,8 +41,8 @@ void simplified_ticker::write(fmt::MemoryWriter &out) {
 
     unsigned int time = time_;
 
-    unsigned short hour = time/100;
-    time -= hour*100;
+    unsigned short hour = my_time / 100;
+    my_time -= hour * 100;
 
     if (time_ > 2359 or time_%100 > 59){
         cerr << fmt::format("Invalid value for time: {:02d}:{:02d}\n", hour, time);

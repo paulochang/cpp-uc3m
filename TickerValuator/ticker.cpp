@@ -8,7 +8,7 @@
 
 ticker::ticker(unsigned short d, unsigned short m, unsigned short y, unsigned short h, unsigned short min,
                unsigned short secs, float decimals, std::string symbol, double price) {
-    date_ = d * 1000000u + m * 10000u + y;
+    date_ = d + m * 100u + y * 10000u;
     time_ = h * 100u + min;
     seconds_ = secs + decimals;
     symbol_ = std::move(symbol);
