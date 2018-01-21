@@ -9,6 +9,9 @@
 #include "file_manager.h"
 #include <dirent.h>
 
+#include <chrono>
+
+std::chrono::time_point<std::chrono::high_resolution_clock> time_start;
 
 /// Manual ticker insertion
 /// \return ts a ticker_storage object
@@ -51,8 +54,8 @@ bool set_input_arg(char **argv, std::string &filename, std::string &output_path,
 
 
 std::vector<simplified_ticker> get_print_ready_vector(unsigned long max_size,
-                                                      const __wrap_iter<vector<ticker, std::__1::allocator<ticker>>::pointer> &first_ticker_it,
-                                                      const __wrap_iter<vector<ticker, std::__1::allocator<ticker>>::pointer> &last_ticker_it) {
+                                                      const std::vector<ticker>::iterator &first_ticker_it,
+                                                      const std::vector<ticker>::iterator &last_ticker_it) {
     vector<simplified_ticker> printing_vector;
     printing_vector.reserve(max_size);
     // current ticker will represent the currently evaluated ticker
@@ -60,7 +63,7 @@ std::vector<simplified_ticker> get_print_ready_vector(unsigned long max_size,
 
     // a pointer to the next ticker and the previous is kept for reference
     auto previous_ticker_it = current_ticker_it;
-    auto next_ticker_it = current_ticker_it + 1;
+    auto next_ticker_it = std::next(current_ticker_it, 1);
 
     // this will be the area cummulative variable
     double current_area = 0;
@@ -126,10 +129,10 @@ std::vector<simplified_ticker> get_print_ready_vector(unsigned long max_size,
 
             // recalculate iterators
             previous_ticker_it = current_ticker_it;
-            current_ticker_it++;
+            std::advance(current_ticker_it, 1);
             // prevent weird iterator bugs...
             if (current_ticker_it != last_ticker_it) {
-                next_ticker_it = current_ticker_it + 1;
+                next_ticker_it = std::next(current_ticker_it, 1);
             }
         }
 
@@ -156,7 +159,12 @@ void print_processed_list(const string output, const ticker_storage &ts, const f
 }
 
 int main(int argc, char **argv) {
+    time_start = std::chrono::high_resolution_clock::now();
+
     using namespace std;
+
+    ios_base::sync_with_stdio(false);
+    cin.tie(NULL);
 
     string filename;
     string output_path = "";
@@ -164,6 +172,8 @@ int main(int argc, char **argv) {
 
     // INITIALIZE TICKER_STORAGE
     ticker_storage ts = ticker_storage();
+
+    auto time_initialize_variables = std::chrono::high_resolution_clock::now();
 
     //region **Argument Handling**
     // Handle different arg numbers
@@ -211,10 +221,13 @@ int main(int argc, char **argv) {
         ts = fm.file_reader(filename);
     }
 
+    auto time_read_file = std::chrono::high_resolution_clock::now();
+
     // ** Process Ticker List **
     // 1. Sort ticker based on symbol, date and time
     ts.sort_ticker();
 
+    auto time_sort = std::chrono::high_resolution_clock::now();
     //region DEBUG - DISPLAY SORTED VECTOR
     /*
     std::cout << "Sorted ticker vector:" << endl;
@@ -229,6 +242,8 @@ int main(int argc, char **argv) {
     // Map<Symbol, { beginning iterator, end iterator } >
     ts.symbol_classify();
 
+    auto time_classify = std::chrono::high_resolution_clock::now();
+
     // 3. Initialize vector to print ticker's
 
     // 4. calculate areas
@@ -237,4 +252,18 @@ int main(int argc, char **argv) {
     //endregion
 
     print_processed_list(output_path, ts, fm);
+
+    auto time_print_file = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> duration_initialize = time_initialize_variables - time_start;
+    std::cout << "Initialize time: " << duration_initialize.count() << " s\n";
+    std::chrono::duration<double> duration_read = time_read_file - time_start;
+    std::cout << "Read time: " << duration_read.count() << " s\n";
+    std::chrono::duration<double> duration_sort = time_sort - time_start;
+    std::cout << "Sort time: " << duration_sort.count() << " s\n";
+    std::chrono::duration<double> duration_classify = time_classify - time_start;
+    std::cout << "Classify time: " << duration_classify.count() << " s\n";
+    std::chrono::duration<double> duration_print_time = time_print_file - time_start;
+    std::cout << "Print time: " << duration_print_time.count() << " s\n";
+
+
 }

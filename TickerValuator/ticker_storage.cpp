@@ -35,8 +35,7 @@ void ticker_storage::symbol_classify() {
 }
 
 
-const std::unordered_map<std::string,
-        std::pair<std::__wrap_iter<std::vector<ticker, std::__1::allocator<ticker>>::pointer>, std::__wrap_iter<std::vector<ticker, std::__1::allocator<ticker>>::pointer>>> &
+const std::unordered_map<std::string, std::pair<std::vector<ticker>::iterator, std::vector<ticker>::iterator>> &
 ticker_storage::classifying_map() const {
     return this->classifying_map_;
 }

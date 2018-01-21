@@ -5,10 +5,10 @@
 #ifndef TICKERVALUATOR_TICKER_STORAGE_H
 #define TICKERVALUATOR_TICKER_STORAGE_H
 
-#include <vector>
 #include <unordered_set>
 #include <string>
 #include <unordered_map>
+#include <vector>
 #include "ticker.h"
 
 class ticker_storage {
@@ -19,7 +19,7 @@ public:
 
     void symbol_classify();
 
-    const std::unordered_map<std::string, std::pair<std::__wrap_iter<std::vector<ticker, std::__1::allocator<ticker>>::pointer>, std::__wrap_iter<std::vector<ticker, std::__1::allocator<ticker>>::pointer>>> &
+    const std::unordered_map<std::string, std::pair<std::vector<ticker>::iterator, std::vector<ticker>::iterator>> &
     classifying_map() const;
 
     const std::vector<ticker> &ticker_vector() const;
