@@ -27,8 +27,7 @@ void simplified_ticker::write(fmt::MemoryWriter &out) {
 
     using namespace std;
 
-    int max_days [12] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    char output [50];
+    unsigned int max_days[12] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
     bool leap_year = false;
 
     unsigned int date = date_;
@@ -39,33 +38,33 @@ void simplified_ticker::write(fmt::MemoryWriter &out) {
     unsigned short month = date/100;
     date -= month*100;
 
-    unsigned int time = time_;
+    unsigned int my_time = time_;
 
     unsigned short hour = my_time / 100;
     my_time -= hour * 100;
 
-    if (time_ > 2359 or time_%100 > 59){
-        cerr << fmt::format("Invalid value for time: {:02d}:{:02d}\n", hour, time);
+    if (time_ > 2359 or time_ % 100 > 59) {
+        cerr << fmt::format("Invalid value for my_time: {:02d}:{:02d}\n", hour, my_time);
     }
 
-    if (month > 12 or date > max_days[month-1]){
+    if (month > 12 or date > max_days[month - 1]) {
         cerr << fmt::format("Invalid value for date: {:02d}-{:02d}-{:02d}\n", date, month, year);
     }
 
-    if (month == 2){
-        if (year%4 != 0){
+    if (month == 2) {
+        if (year % 4 != 0) {
             leap_year = false;
-        } else if (year%100 != 0){
+        } else if (year % 100 != 0) {
             leap_year = true;
-        } else if (year%400 != 0){
+        } else if (year % 400 != 0) {
             leap_year = false;
         }
 
-        if (date == 29 and !leap_year){
+        if (date == 29 and !leap_year) {
             cerr << fmt::format("Invalid leap year:: {:02d}-{:02d}-{:02d}\n", date, month, year);
         }
     }
     
 
-    out.write("{:02d}-{:02d}-{:02d} {:02d}:{:02d} {:.2f}\n", date, month, year, hour, time, price_);
+    out.write("{:02d}-{:02d}-{:02d} {:02d}:{:02d} {:.2f}\n", date, month, year, hour, my_time, price_);
 }

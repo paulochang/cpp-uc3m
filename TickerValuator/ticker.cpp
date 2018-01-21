@@ -15,9 +15,9 @@ ticker::ticker(unsigned short d, unsigned short m, unsigned short y, unsigned sh
     price_.push_back(price);
 }
 
-ticker::ticker(unsigned int date, unsigned short time, double seconds, std::string symbol, double price) {
+ticker::ticker(unsigned int date, unsigned short my_time, double seconds, std::string symbol, double price) {
     date_ = date;
-    time_ = time;
+    time_ = my_time;
     seconds_ = seconds;
     symbol_ = symbol;
     price_.push_back(price);
@@ -93,21 +93,21 @@ std::istream & operator>>(std::istream & is, ticker & tk) {
 
 
     unsigned int date = stoi(date_str.substr(6,4) + date_str.substr(3,2) + date_str.substr(0,2));
-    unsigned short time = stoi(time_str.substr(0,2) + time_str.substr(3,2));
+    unsigned short my_time = stoi(time_str.substr(0, 2) + time_str.substr(3, 2));
     double seconds = stod(time_str.substr(6, 9));
     string symbol = symbol_str.substr(1, symbol_str.length()-2);
 
-    if (seconds < 0 or seconds >= 60){
-        cerr << "Invalid value for seconds: "<< seconds << endl;
+    if (seconds < 0 or seconds >= 60) {
+        cerr << "Invalid value for seconds: " << seconds << endl;
         return is;
     }
 
-    if (price < 0){
-        cerr << "Invalid value for price: "<< price << endl;
+    if (price < 0) {
+        cerr << "Invalid value for price: " << price << endl;
         return is;
     }
 
-    tk = ticker{date, time, seconds, symbol, price};
+    tk = ticker{date, my_time, seconds, symbol, price};
 
     return is;
 }
