@@ -14,7 +14,7 @@ public:
     ticker(unsigned short d, unsigned short m, unsigned short y, unsigned short h, unsigned short min,
            unsigned short secs, float decimals, std::string symbol, double price);
 
-    ticker(unsigned int date, unsigned short time, double seconds, std::string symbol, double price);
+    ticker(unsigned int date, unsigned short my_time, double seconds, std::string symbol, double price);
 
     void add_price(double price);
 
