@@ -1,7 +1,9 @@
 //
 // Created by Paulo Chang on 1/6/18.
 //
-
+#ifdef _MSC_VER
+#include <iso646.h>
+#endif
 #include "ticker_storage.h"
 
 struct SymbolComparer {
@@ -14,9 +16,9 @@ struct SymbolComparer {
     }
 };
 
-void ticker_storage::add_ticker(ticker myTicker) {
+void ticker_storage::add_ticker(const ticker &myTicker) {
     is_sorted = false;
-    ticker_vector_.push_back(myTicker);
+    ticker_vector_.emplace_back(myTicker);
     symbol_set_.insert(myTicker.symbol());
 }
 
@@ -27,16 +29,16 @@ void ticker_storage::sort_ticker() {
 
 void ticker_storage::symbol_classify() {
     if (!is_sorted) sort_ticker();
-    for (auto i : symbol_set_) {
+    for (const auto &i : symbol_set_) {
         this->classifying_map_.insert(
                 make_pair(i, std::equal_range(ticker_vector_.begin(), ticker_vector_.end(), i, SymbolComparer())));
     }
-    is_classified = true;
 }
 
 
 const std::unordered_map<std::string, std::pair<std::vector<ticker>::iterator, std::vector<ticker>::iterator>> &
 ticker_storage::classifying_map() const {
+    ;
     return this->classifying_map_;
 }
 
