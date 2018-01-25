@@ -79,7 +79,7 @@ ticker_storage file_manager::file_reader(const string input_path) {
         params = fscanf(fp, "%u-%u-%u %u:%u:%lf \"%[^\"]\" %lf", &d, &m, &y, &h, &min, &secs, symbol, &price);
 
         if (params != 8){
-            cerr << "Invalid input value: " << fp << endl;
+            cerr << fmt::format("Invalid input value: {0}-{1}-{2} {3}:{4}:{5} {6} {7}\n", d, m, y, h, min, secs, symbol, price) << endl;
         }
 
         unsigned int date = d + m * 100u + y * 10000u;
