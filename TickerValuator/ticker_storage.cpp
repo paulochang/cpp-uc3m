@@ -18,7 +18,7 @@ struct SymbolComparer {
 
 void ticker_storage::add_ticker(const ticker &myTicker) {
     is_sorted = false;
-    ticker_vector_.emplace_back(myTicker);
+    ticker_vector_.push_back(myTicker);
     symbol_set_.insert(myTicker.symbol());
 }
 
@@ -36,12 +36,12 @@ void ticker_storage::symbol_classify() {
 }
 
 
-const std::unordered_map<std::string, std::pair<std::vector<ticker>::iterator, std::vector<ticker>::iterator>> &
+const std::unordered_map<std::string, std::pair<tbb::concurrent_vector<ticker>::iterator, tbb::concurrent_vector<ticker>::iterator>> &
 ticker_storage::classifying_map() const {
     ;
     return this->classifying_map_;
 }
 
-const std::vector<ticker> &ticker_storage::ticker_vector() const {
+const tbb::concurrent_vector<ticker> &ticker_storage::ticker_vector() const {
     return this->ticker_vector_;
 }

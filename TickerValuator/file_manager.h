@@ -12,6 +12,6 @@ class file_manager {
     ticker_storage file_reader(string input_path);
 
     void file_writer(string output_path, string file_name,
-                     const std::vector<simplified_ticker> &printing_vector) const;
+                     const tbb::concurrent_vector<simplified_ticker> &printing_vector) const;
 };
 

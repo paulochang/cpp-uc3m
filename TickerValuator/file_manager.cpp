@@ -74,8 +74,8 @@ ticker_storage file_manager::file_reader(const string input_path) {
     char symbol[32];
     double price;
     //13-02-2002 18:58:19.594486 "BBVA" 184.18
-    while (int ret = fscanf(fp, "%u-%u-%u %u:%u:%lf \"%[^\"]\" %lf",
-                            &d, &m, &y, &h, &min, &secs, symbol, &price) == 8) {
+    while (fscanf(fp, "%u-%u-%u %u:%u:%lf \"%[^\"]\" %lf",
+                  &d, &m, &y, &h, &min, &secs, symbol, &price) == 8) {
 
         unsigned int date = d + m * 100u + y * 10000u;
         unsigned short time_ = static_cast<unsigned short>(h * 100u + min);
@@ -91,7 +91,7 @@ ticker_storage file_manager::file_reader(const string input_path) {
 }
 
 void file_manager::file_writer(const string output_path, const string file_name,
-                               const std::vector<simplified_ticker> &printing_vector) const {
+                               const tbb::concurrent_vector<simplified_ticker> &printing_vector) const {
 
     std::string my_string(file_name);
 

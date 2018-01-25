@@ -8,9 +8,10 @@
 #include <unordered_set>
 #include <string>
 #include <unordered_map>
-#include <vector>
 #include <iostream>
 #include <algorithm>
+#include "tbb/concurrent_vector.h"
+
 
 #include "ticker.h"
 
@@ -22,15 +23,15 @@ public:
 
     void symbol_classify();
 
-    const std::unordered_map<std::string, std::pair<std::vector<ticker>::iterator, std::vector<ticker>::iterator>> &
+    const std::unordered_map<std::string, std::pair<tbb::concurrent_vector<ticker>::iterator, tbb::concurrent_vector<ticker>::iterator>> &
     classifying_map() const;
 
-    const std::vector<ticker> &ticker_vector() const;
+    const tbb::concurrent_vector<ticker> &ticker_vector() const;
 
 private:
-    std::vector<ticker> ticker_vector_;
+    tbb::concurrent_vector<ticker> ticker_vector_;
     std::unordered_set<std::string> symbol_set_;
-    std::unordered_map<std::string, std::pair<std::vector<ticker>::iterator, std::vector<ticker>::iterator>> classifying_map_;
+    std::unordered_map<std::string, std::pair<tbb::concurrent_vector<ticker>::iterator, tbb::concurrent_vector<ticker>::iterator>> classifying_map_;
     bool is_sorted{false};
 };
 
