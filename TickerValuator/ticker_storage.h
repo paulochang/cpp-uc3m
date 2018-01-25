@@ -9,11 +9,14 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <iostream>
+#include <algorithm>
+
 #include "ticker.h"
 
 class ticker_storage {
 public:
-    void add_ticker(ticker myTicker);
+    void add_ticker(const ticker &myTicker);
 
     void sort_ticker();
 
@@ -29,7 +32,6 @@ private:
     std::unordered_set<std::string> symbol_set_;
     std::unordered_map<std::string, std::pair<std::vector<ticker>::iterator, std::vector<ticker>::iterator>> classifying_map_;
     bool is_sorted{false};
-    bool is_classified{false};
 };
 
 #endif //TICKERVALUATOR_TICKER_STORAGE_H
