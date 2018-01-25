@@ -94,8 +94,8 @@ std::istream & operator>>(std::istream & is, ticker & tk) {
     is >> date_str >> time_str >> symbol_str >> price;
     if (!is) return is;
 
-    unsigned int date;
-    unsigned short my_time;
+    unsigned int date = 200001001;
+    unsigned short my_time = 0000;
     try {
         date = stoi(date_str.substr(6, 4) + date_str.substr(3, 2) + date_str.substr(0, 2));
         my_time = stoi(time_str.substr(0, 2) + time_str.substr(3, 2));

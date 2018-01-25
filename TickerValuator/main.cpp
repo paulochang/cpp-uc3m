@@ -1,5 +1,5 @@
 #include <iostream>
-#include <vector>
+#include "tbb/concurrent_vector.h"
 #include <fstream>
 
 #include "ticker.h"
@@ -53,10 +53,10 @@ bool set_input_arg(char **argv, std::string &filename, std::string &output_path,
 }
 
 
-std::vector<simplified_ticker> get_print_ready_vector(unsigned long max_size,
-                                                      const std::vector<ticker>::iterator &first_ticker_it,
-                                                      const std::vector<ticker>::iterator &last_ticker_it) {
-    vector<simplified_ticker> printing_vector;
+tbb::concurrent_vector<simplified_ticker> get_print_ready_vector(unsigned long max_size,
+                                                                 const tbb::concurrent_vector<ticker>::iterator &first_ticker_it,
+                                                                 const tbb::concurrent_vector<ticker>::iterator &last_ticker_it) {
+    tbb::concurrent_vector<simplified_ticker> printing_vector;
     printing_vector.reserve(max_size);
     // current ticker will represent the currently evaluated ticker
     auto current_ticker_it = first_ticker_it;
@@ -152,8 +152,8 @@ void print_processed_list(const string &output, const ticker_storage &ts, const 
         auto first_ticker_it = current_symbol.second.first;
         auto last_ticker_it = current_symbol.second.second;
 
-        std::vector<simplified_ticker> printing_vector = get_print_ready_vector(max_size, first_ticker_it,
-                                                                                last_ticker_it);
+        tbb::concurrent_vector<simplified_ticker> printing_vector = get_print_ready_vector(max_size, first_ticker_it,
+                                                                                           last_ticker_it);
         fm.file_writer(output, current_symbol.first, printing_vector);
     }
 }
