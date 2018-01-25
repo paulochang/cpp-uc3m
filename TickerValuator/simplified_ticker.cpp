@@ -4,6 +4,7 @@
 
 #include "simplified_ticker.h"
 #include <iostream>
+#include <algorithm>
 
 simplified_ticker::simplified_ticker(unsigned int date, unsigned short time, double price) {
     date_ = date;
@@ -31,16 +32,16 @@ void simplified_ticker::write(fmt::MemoryWriter &out) {
     bool leap_year = false;
 
     unsigned int date = date_;
-    
-    unsigned short year = date/10000;
+
+    auto year = static_cast<unsigned short>(date / 10000);
     date -= year*10000;
 
-    unsigned short month = date/100;
+    auto month = static_cast<unsigned short>(date / 100);
     date -= month*100;
 
     unsigned int my_time = time_;
 
-    unsigned short hour = my_time / 100;
+    auto hour = static_cast<unsigned short>(my_time / 100);
     my_time -= hour * 100;
 
     if (time_ > 2359 or time_ % 100 > 59) {

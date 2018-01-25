@@ -2,20 +2,23 @@
 // Created by Paulo Chang on 1/6/18.
 //
 
-#include <numeric>
 #include "ticker.h"
+#include <numeric>
 #include <iostream>
+#include <algorithm>
 
-ticker::ticker(unsigned short d, unsigned short m, unsigned short y, unsigned short h, unsigned short min,
-               unsigned short secs, float decimals, std::string symbol, double price) {
+ticker::ticker(const unsigned short d, const unsigned short m, const unsigned short y, const unsigned short h,
+               const unsigned short min,
+               const unsigned short secs, const float decimals, const std::string symbol, const double price) {
     date_ = d + m * 100u + y * 10000u;
-    time_ = h * 100u + min;
+    time_ = static_cast<unsigned short>(h * 100u + min);
     seconds_ = secs + decimals;
-    symbol_ = std::move(symbol);
+    symbol_ = symbol;
     price_.push_back(price);
 }
 
-ticker::ticker(unsigned int date, unsigned short my_time, double seconds, std::string symbol, double price) {
+ticker::ticker(const unsigned int date, const unsigned short my_time, const double seconds, const std::string symbol,
+               const double price) {
     date_ = date;
     time_ = my_time;
     seconds_ = seconds;
@@ -23,11 +26,11 @@ ticker::ticker(unsigned int date, unsigned short my_time, double seconds, std::s
     price_.push_back(price);
 }
 
-void ticker::add_price(double price) {
+void ticker::add_price(const double price) {
     price_.push_back(price);
 }
 
-void ticker::add_price(std::vector<double> priceVector) {
+void ticker::add_price(const std::vector<double> priceVector) {
     price_.insert(price_.end(), priceVector.begin(), priceVector.end());
 }
 
@@ -91,9 +94,16 @@ std::istream & operator>>(std::istream & is, ticker & tk) {
     is >> date_str >> time_str >> symbol_str >> price;
     if (!is) return is;
 
-
-    unsigned int date = stoi(date_str.substr(6,4) + date_str.substr(3,2) + date_str.substr(0,2));
-    unsigned short my_time = stoi(time_str.substr(0, 2) + time_str.substr(3, 2));
+    unsigned int date;
+    unsigned short my_time;
+    try {
+        date = stoi(date_str.substr(6, 4) + date_str.substr(3, 2) + date_str.substr(0, 2));
+        my_time = stoi(time_str.substr(0, 2) + time_str.substr(3, 2));
+    } catch (const std::exception &e) {
+        std::cout << e.what();
+        std::cout << "date" << date_str;
+        std::cout << "time" << time_str;
+    }
     double seconds = stod(time_str.substr(6, 9));
     string symbol = symbol_str.substr(1, symbol_str.length()-2);
 
