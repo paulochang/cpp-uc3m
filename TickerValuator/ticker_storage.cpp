@@ -4,6 +4,10 @@
 #ifdef _MSC_VER
 #include <iso646.h>
 #endif
+
+#include <iostream>
+#include <algorithm>
+#include "tbb/parallel_sort.h"
 #include "ticker_storage.h"
 
 struct SymbolComparer {
@@ -23,7 +27,7 @@ void ticker_storage::add_ticker(const ticker &myTicker) {
 }
 
 void ticker_storage::sort_ticker() {
-    std::sort(ticker_vector_.begin(), ticker_vector_.end());
+    parallel_sort(ticker_vector_.begin(), ticker_vector_.end(), std::less<ticker>());
     is_sorted = true;
 }
 
@@ -36,9 +40,8 @@ void ticker_storage::symbol_classify() {
 }
 
 
-const std::unordered_map<std::string, std::pair<tbb::concurrent_vector<ticker>::iterator, tbb::concurrent_vector<ticker>::iterator>> &
+const tbb::concurrent_unordered_map<std::string, std::pair<tbb::concurrent_vector<ticker>::iterator, tbb::concurrent_vector<ticker>::iterator>> &
 ticker_storage::classifying_map() const {
-    ;
     return this->classifying_map_;
 }
 

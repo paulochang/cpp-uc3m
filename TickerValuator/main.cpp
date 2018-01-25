@@ -8,8 +8,7 @@
 #include "area_utils.h"
 #include "file_manager.h"
 #include <dirent.h>
-
-#include <chrono>
+#include "tbb/tbb.h"
 
 
 
@@ -74,12 +73,11 @@ tbb::concurrent_vector<simplified_ticker> get_print_ready_vector(unsigned long m
     while (current_ticker_it != last_ticker_it) {
         ticker current_ticker = (*current_ticker_it);
         ticker previous_ticker = (*previous_ticker_it);
-        ticker next_ticker = (*next_ticker_it);
 
         // CASE1: next ticker has same timestamp (and symbol) as previous
-        if (current_ticker == next_ticker) {
+        if (next_ticker_it != last_ticker_it && current_ticker == (*next_ticker_it)) {
             // Add price to pricing set (this will average later)
-            next_ticker.add_price(current_ticker.price());
+            (*next_ticker_it).add_price(current_ticker.price());
             current_ticker_it = next_ticker_it++;
         } else {
 
@@ -106,7 +104,7 @@ tbb::concurrent_vector<simplified_ticker> get_print_ready_vector(unsigned long m
             //endregion
 
             //region ** Area to the right calculation **
-            if (next_ticker_it != last_ticker_it && AreaUtils::isContiguous(current_ticker, next_ticker)) {
+            if (next_ticker_it != last_ticker_it && AreaUtils::isContiguous(current_ticker, (*next_ticker_it))) {
                 //CASE 2.a: if there is at least one remaining ticker
                 // AND it's in the same timeframe as current one
                 // enable previous_in_range flag
@@ -209,6 +207,8 @@ int main(int argc, char **argv) {
     }
     //endregion
 
+//    std::cout << "initialized. " << endl;
+
     if (!output_path.empty()) {
         
         DIR* dir = opendir(output_path.c_str());
@@ -219,17 +219,23 @@ int main(int argc, char **argv) {
         }
     }
 
+    //   std::cout << "Read directory " << endl;
+
     if (filename.empty()){
         ts = manual_ticker_insertion();
     } else {
         ts = fm.file_reader(filename);
     }
 
+    //   std::cout << "Read file " << endl;
+
     auto time_read_file = std::chrono::high_resolution_clock::now();
 
     // ** Process Ticker List **
     // 1. Sort ticker based on symbol, date and time
     ts.sort_ticker();
+
+//    std::cout << "sorted vector" << endl;
 
     auto time_sort = std::chrono::high_resolution_clock::now();
     //region DEBUG - DISPLAY SORTED VECTOR
@@ -246,6 +252,8 @@ int main(int argc, char **argv) {
     // Map<Symbol, { beginning iterator, end iterator } >
     ts.symbol_classify();
 
+//    std::cout << "classified vector" << endl;
+
     auto time_classify = std::chrono::high_resolution_clock::now();
 
     // 3. Initialize vector to print ticker's
@@ -256,6 +264,8 @@ int main(int argc, char **argv) {
     //endregion
 
     print_processed_list(output_path, ts, fm);
+
+//    std::cout << "printed vector" << endl;
 
     auto time_print_file = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> duration_initialize = time_initialize_variables - time_start;

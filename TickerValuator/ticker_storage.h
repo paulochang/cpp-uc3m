@@ -5,11 +5,9 @@
 #ifndef TICKERVALUATOR_TICKER_STORAGE_H
 #define TICKERVALUATOR_TICKER_STORAGE_H
 
-#include <unordered_set>
+#include "tbb/concurrent_unordered_set.h"
 #include <string>
-#include <unordered_map>
-#include <iostream>
-#include <algorithm>
+#include "tbb/concurrent_unordered_map.h"
 #include "tbb/concurrent_vector.h"
 
 
@@ -23,15 +21,15 @@ public:
 
     void symbol_classify();
 
-    const std::unordered_map<std::string, std::pair<tbb::concurrent_vector<ticker>::iterator, tbb::concurrent_vector<ticker>::iterator>> &
+    const tbb::concurrent_unordered_map<std::string, std::pair<tbb::concurrent_vector<ticker>::iterator, tbb::concurrent_vector<ticker>::iterator>> &
     classifying_map() const;
 
     const tbb::concurrent_vector<ticker> &ticker_vector() const;
 
 private:
     tbb::concurrent_vector<ticker> ticker_vector_;
-    std::unordered_set<std::string> symbol_set_;
-    std::unordered_map<std::string, std::pair<tbb::concurrent_vector<ticker>::iterator, tbb::concurrent_vector<ticker>::iterator>> classifying_map_;
+    tbb::concurrent_unordered_set<std::string> symbol_set_;
+    tbb::concurrent_unordered_map<std::string, std::pair<tbb::concurrent_vector<ticker>::iterator, tbb::concurrent_vector<ticker>::iterator>> classifying_map_;
     bool is_sorted{false};
 };
 
