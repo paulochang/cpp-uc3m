@@ -79,6 +79,44 @@ ticker_storage file_manager::file_reader(const string input_path) {
 
         unsigned int date = d + m * 100u + y * 10000u;
         unsigned short time_ = static_cast<unsigned short>(h * 100u + min);
+        unsigned int max_days[12] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+        bool leap_year = false;
+
+        if (secs >= 60) {
+            cerr << "Invalid value for seconds: " << secs << endl;
+        }
+
+        if (price < 0) {
+            cerr << "Invalid value for price: " << price << endl;
+        }
+
+        if (h > 24) {
+            cerr << "Invalid value for hour: " << h << endl;
+        }
+
+        if (min > 60) {
+            cerr << "Invalid value for minutes: " << min << endl;
+        }
+
+        if (m > 12 || d > max_days[m - 1]) {
+            cerr << fmt::format("Invalid value for date: {:02d}-{:02d}-{:02d}\n", d, m, y);
+        }
+
+        if (m == 2) {
+            if (y % 4 != 0) {
+                leap_year = false;
+            } else if (y % 100 != 0) {
+                leap_year = true;
+            } else if (y % 400 != 0) {
+                leap_year = false;
+            }
+
+            if (d == 29 && !leap_year) {
+                cerr << fmt::format("Invalid leap year: {:02d}-{:02d}-{:02d}\n", d, m, y);
+            }
+        }
+
+
         tk = ticker{date, time_, secs, symbol, price};
         ts.add_ticker(tk);
     }
