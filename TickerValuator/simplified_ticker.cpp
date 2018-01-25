@@ -28,8 +28,8 @@ void simplified_ticker::write(fmt::MemoryWriter &out) {
 
     using namespace std;
 
-    unsigned int max_days[12] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-    bool leap_year = false;
+    //unsigned int max_days[12] = {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+    //bool leap_year = false;
 
     unsigned int date = date_;
 
@@ -44,8 +44,9 @@ void simplified_ticker::write(fmt::MemoryWriter &out) {
     auto hour = static_cast<unsigned short>(my_time / 100);
     my_time -= hour * 100;
 
+    /*
     if (time_ > 2359 or time_ % 100 > 59) {
-        cerr << fmt::format("Invalid value for my_time: {:02d}:{:02d}\n", hour, my_time);
+        cerr << fmt::format("Invalid value for time: {:02d}:{:02d}\n", hour, my_time);
     }
 
     if (month > 12 or date > max_days[month - 1]) {
@@ -65,7 +66,7 @@ void simplified_ticker::write(fmt::MemoryWriter &out) {
             cerr << fmt::format("Invalid leap year:: {:02d}-{:02d}-{:02d}\n", date, month, year);
         }
     }
-    
+    */
 
     out.write("{:02d}-{:02d}-{:02d} {:02d}:{:02d} {:.2f}\n", date, month, year, hour, my_time, price_);
 }
