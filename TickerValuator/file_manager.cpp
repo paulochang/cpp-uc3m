@@ -73,9 +73,14 @@ ticker_storage file_manager::file_reader(const string input_path) {
     double secs;
     char symbol[32];
     double price;
+    int params = 0;
     //13-02-2002 18:58:19.594486 "BBVA" 184.18
-    while (fscanf(fp, "%u-%u-%u %u:%u:%lf \"%[^\"]\" %lf",
-                  &d, &m, &y, &h, &min, &secs, symbol, &price) == 8) {
+    do {
+        params = fscanf(fp, "%u-%u-%u %u:%u:%lf \"%[^\"]\" %lf", &d, &m, &y, &h, &min, &secs, symbol, &price);
+
+        if (params != 8){
+            cerr << "Invalid input value: " << fp << endl;
+        }
 
         unsigned int date = d + m * 100u + y * 10000u;
         unsigned short time_ = static_cast<unsigned short>(h * 100u + min);
@@ -119,7 +124,7 @@ ticker_storage file_manager::file_reader(const string input_path) {
 
         tk = ticker{date, time_, secs, symbol, price};
         ts.add_ticker(tk);
-    }
+    } while (params == 8);
 
     fclose(fp);
 
