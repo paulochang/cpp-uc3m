@@ -11,7 +11,7 @@
 
 #include <chrono>
 
-std::chrono::time_point<std::chrono::high_resolution_clock> time_start;
+
 
 /// Manual ticker insertion
 /// \return ts a ticker_storage object
@@ -140,7 +140,7 @@ std::vector<simplified_ticker> get_print_ready_vector(unsigned long max_size,
     return printing_vector;
 }
 
-void print_processed_list(const string output, const ticker_storage &ts, const file_manager fm) {
+void print_processed_list(const string &output, const ticker_storage &ts, const file_manager fm) {
 
 
     unsigned long max_size = ts.ticker_vector().size();
@@ -159,15 +159,19 @@ void print_processed_list(const string output, const ticker_storage &ts, const f
 }
 
 int main(int argc, char **argv) {
-    time_start = std::chrono::high_resolution_clock::now();
+    std::chrono::time_point<std::chrono::high_resolution_clock> time_start = std::chrono::high_resolution_clock::now();
 
     using namespace std;
 
     ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
+
+    //char buffer[1048576];
+    //std::cin.rdbuf()->pubsetbuf(buffer, sizeof(buffer));
+
+    cin.tie(nullptr);
 
     string filename;
-    string output_path = "";
+    string output_path;
     file_manager fm = file_manager();
 
     // INITIALIZE TICKER_STORAGE
@@ -205,7 +209,7 @@ int main(int argc, char **argv) {
     }
     //endregion
 
-    if (output_path != ""){
+    if (!output_path.empty()) {
         
         DIR* dir = opendir(output_path.c_str());
         if (dir) {
@@ -264,6 +268,5 @@ int main(int argc, char **argv) {
     std::cout << "Classify time: " << duration_classify.count() << " s\n";
     std::chrono::duration<double> duration_print_time = time_print_file - time_start;
     std::cout << "Print time: " << duration_print_time.count() << " s\n";
-
 
 }
