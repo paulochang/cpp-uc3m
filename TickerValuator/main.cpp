@@ -8,8 +8,14 @@
 #include "area_utils.h"
 #include "file_manager.h"
 #include <dirent.h>
-#include "tbb/tbb.h"
+#include "tbb/parallel_for.h"
+#include <cmath>
 
+
+typedef tbb::concurrent_unordered_map<std::string, std::pair<tbb::concurrent_vector<ticker>::iterator, tbb::concurrent_vector<ticker>::iterator>> MySymbolMap;
+
+string output_path;
+unsigned long max_size;
 
 
 /// Manual ticker insertion
@@ -30,18 +36,18 @@ ticker_storage manual_ticker_insertion() {
 }
 
 bool set_input_arg(char **argv, std::string &filename, std::string &output_path, const int order) {
-    const int index = order*2+1;
+    const int index = order * 2 + 1;
     string current_flag = argv[index];
 
     //Choose path type
     if (current_flag == "-i") {
 
-        filename = argv[index+1];
+        filename = argv[index + 1];
         return true;
 
     } else if (current_flag == "-o") {
 
-        output_path = argv[index+1];
+        output_path = argv[index + 1];
         return true;
 
     } else {
@@ -91,7 +97,7 @@ tbb::concurrent_vector<simplified_ticker> get_print_ready_vector(unsigned long m
                 // Since previous ticker was not in the same minute timeframe, this is the first ticker
                 // therefore, calculate area to the left pretending lower bound has same price and keep going
                 current_area += AreaUtils::left_area(
-                        floor(current_ticker.seconds()), current_ticker.seconds(), current_ticker.avg_price(),
+                        std::floor(current_ticker.seconds()), current_ticker.seconds(), current_ticker.avg_price(),
                         current_ticker.avg_price());
             } else {
                 //CASE 2.2: previous ticker was in same minute timeframe
@@ -113,7 +119,7 @@ tbb::concurrent_vector<simplified_ticker> get_print_ready_vector(unsigned long m
                 //CASE 2.b: if not, just assume limit of timeframe has the same value and sum up area.
                 current_area += AreaUtils::right_area(
                         current_ticker.seconds(),
-                        floor(current_ticker.seconds()) + 1,
+                        std::floor(current_ticker.seconds()) + 1,
                         current_ticker.avg_price(),
                         current_ticker.avg_price());
 
@@ -138,13 +144,44 @@ tbb::concurrent_vector<simplified_ticker> get_print_ready_vector(unsigned long m
     return printing_vector;
 }
 
-void print_processed_list(const string &output, const ticker_storage &ts, const file_manager fm) {
+class SymbolMapIteration {
+
+    MySymbolMap &data;
+
+public:
+
+    SymbolMapIteration(MySymbolMap &_data) : data(_data) {}
+
+    void operator()(MySymbolMap::range_type &r) const {
+
+        for (MySymbolMap::iterator current_symbol = r.begin(); current_symbol != r.end(); ++current_symbol) {
+
+            auto first_ticker_it = current_symbol->second.first;
+            auto last_ticker_it = current_symbol->second.second;
+
+            tbb::concurrent_vector<simplified_ticker> printing_vector = get_print_ready_vector(max_size,
+                                                                                               first_ticker_it,
+                                                                                               last_ticker_it);
+
+            file_manager fm = file_manager();
+            fm.file_writer(output_path, current_symbol->first, printing_vector);
+        }
+    }
+};
+
+void print_processed_list(const ticker_storage &ts) {
 
 
-    unsigned long max_size = ts.ticker_vector().size();
+    max_size = ts.ticker_vector().size();
+
+    MySymbolMap mySymbolMap = ts.classifying_map();
+
+    MySymbolMap::range_type r = mySymbolMap.range();
 
 
+    tbb::parallel_for(r, SymbolMapIteration(mySymbolMap), tbb::auto_partitioner());
     // For each asset...
+    /*
     for (auto current_symbol : ts.classifying_map()) {
 
         auto first_ticker_it = current_symbol.second.first;
@@ -154,6 +191,7 @@ void print_processed_list(const string &output, const ticker_storage &ts, const 
                                                                                            last_ticker_it);
         fm.file_writer(output, current_symbol.first, printing_vector);
     }
+     */
 }
 
 int main(int argc, char **argv) {
@@ -163,13 +201,12 @@ int main(int argc, char **argv) {
 
     ios_base::sync_with_stdio(false);
 
-    //char buffer[1048576];
-    //std::cin.rdbuf()->pubsetbuf(buffer, sizeof(buffer));
+    char buffer[1048576];
+    std::cin.rdbuf()->pubsetbuf(buffer, sizeof(buffer));
 
     cin.tie(nullptr);
 
     string filename;
-    string output_path;
     file_manager fm = file_manager();
 
     // INITIALIZE TICKER_STORAGE
@@ -210,18 +247,18 @@ int main(int argc, char **argv) {
 //    std::cout << "initialized. " << endl;
 
     if (!output_path.empty()) {
-        
-        DIR* dir = opendir(output_path.c_str());
+
+        DIR *dir = opendir(output_path.c_str());
         if (dir) {
             closedir(dir);
-        } else{
+        } else {
             cerr << "Directory " << output_path << " does not exist." << endl;
         }
     }
 
     //   std::cout << "Read directory " << endl;
 
-    if (filename.empty()){
+    if (filename.empty()) {
         ts = manual_ticker_insertion();
     } else {
         ts = fm.file_reader(filename);
@@ -263,7 +300,7 @@ int main(int argc, char **argv) {
     //std::cout << "ticker classifying map:" << endl;
     //endregion
 
-    print_processed_list(output_path, ts, fm);
+    print_processed_list(ts);
 
 //    std::cout << "printed vector" << endl;
 
