@@ -188,41 +188,21 @@ El objeto `simplified_ticker` es utilizado para representar un objeto `ticker` a
 	* `fmt::MemoryWriter &out`: Objeto `MemoryWriter` de la biblioteca *fmt* en donde se agregará el *ticker* actual.
 
 
-#### `ticker_storage`
-
-###### Atributos
-
-* `tbb::concurrent_vector<ticker> ticker_vector_`:
-    
-* `tbb::concurrent_unordered_set<std::string> symbol_set_`:
-    
-* `tbb::concurrent_unordered_map<std::string, std::pair<tbb::concurrent_vector<ticker>::iterator, tbb::concurrent_vector<ticker>::iterator>> classifying_map_`: 
-    
-* `bool is_sorted{false}`:
-
-###### Métodos
-
-* `void add_ticker(const ticker &myTicker)`:
-
-* `void sort_ticker()`:
-
-* `void symbol_classify()`: 
-
-* `const tbb::concurrent_unordered_map<std::string, std::pair<tbb::concurrent_vector<ticker>::iterator, tbb::concurrent_vector<ticker>::iterator>> & classifying_map() const`: 
-
-    const tbb::concurrent_vector<ticker> &ticker_vector() const;
-
-
 #### `file_manager`
 
 Este objeto es utilizado para las operaciones que tienen interacción con archivos, lectura y escritura.
 
 ###### Métodos
 
-* `ticker_storage file_reader(string input_path)`:
+* `ticker_storage file_reader(string input_path)`: Método utilizado para la lectua de archivos.
 
-* `void file_writer(string output_path, string file_name, const tbb::concurrent_vector<simplified_ticker> &printing_vector) const`:
+	Parámetros
+	
+	* `string input_path`: Archivo de donde leerá la entrada de datos.
 
+	Retorno
+	
+	* `ticker_storage file_reader`: Objeto *ticker_storage* con todos los *ticker* que leyó de la entrada.
 
 ### Paralelización
 
@@ -251,25 +231,6 @@ Para darle formato al texto siguiendo el formato de salida fue utilizada la bibl
 
 La bilioteca está disponible en [github fmt](<https://github.com/fmtlib/fmt>)
 
-### Pruebas
-
-###### Resultados antes de paralelización
-
-|             |100 resgistros|1000 registros|10000 registros|
-|-------------|--------------|--------------|---------------|
-|Lectura      |              |              |               |
-|Ordenamiento |              |              |               |
-|Clasificación|              |              |               |
-|Escritura    |              |              |               |
-
-###### Resultados después de paralelización
-
-|             |100 resgistros|1000 registros|10000 registros|
-|-------------|--------------|--------------|---------------|
-|Lectura      |              |              |               |
-|Ordenamiento |              |              |               |
-|Clasificación|              |              |               |
-|Escritura    |              |              |               |
 
 ### Consideraciones
 
