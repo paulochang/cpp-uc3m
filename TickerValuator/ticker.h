@@ -6,7 +6,6 @@
 #define TICKERVALUATOR_TICKER_H
 
 #include <string>
-#include <vector>
 
 class ticker {
 public:
@@ -16,9 +15,7 @@ public:
 
     ticker(unsigned int date, unsigned short my_time, double seconds, std::string symbol, double price);
 
-    void add_price(double price);
-
-    void add_price(std::vector<double> priceVector);
+    void add_price(double price, unsigned short price_nr);
 
     double avg_price() const;
 
@@ -32,7 +29,9 @@ public:
 
     double seconds() const;
 
-    const std::vector<double> &price() const;
+    double price() const;
+
+    double price_nr() const;
 
     const std::string &symbol() const;
 
@@ -42,7 +41,8 @@ private:
     unsigned short time_{0000};
     double seconds_{0.000000};
     std::string symbol_{"Initial string"};
-    std::vector<double> price_{};
+    double price_{0};
+    unsigned short price_nr_ {};
 };
 
 std::ostream &operator<<(std::ostream &os, const ticker &tk);
