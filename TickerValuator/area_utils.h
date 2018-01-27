@@ -39,7 +39,7 @@ namespace AreaUtils {
             double m = (y2 - y1) / (x2 - x1);
             double b = (y2 - m * x2);
             currentX2 = intPart1 + 1;
-            currentY2 = m * (intPart1 + 1) + b;
+            currentY2 = m * currentX2 + b;
         } else {
             currentX2 = x2;
             currentY2 = y2;
