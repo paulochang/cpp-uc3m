@@ -65,7 +65,7 @@ double ticker::price() const {
     return price_;
 }
 
-double ticker::price_nr() const {
+unsigned short ticker::price_nr() const {
     return price_nr_;
 }
 

@@ -34,8 +34,7 @@ ticker_storage file_manager::file_reader(const string input_path) {
     // Sample format:
     //13-02-2002 18:58:19.594486 "BBVA" 184.18
 
-    do {
-        params = fscanf(fp, "%u-%u-%u %u:%u:%lf \"%[^\"]\" %lf", &d, &m, &y, &h, &min, &secs, symbol, &price);
+    while((params = fscanf(fp, "%u-%u-%u %u:%u:%lf \"%[^\"]\" %lf", &d, &m, &y, &h, &min, &secs, symbol, &price)) != EOF) {
 
         if (params != 8){
             cerr << fmt::format("Invalid input value: {0}-{1}-{2} {3}:{4}:{5} {6} {7}\n", d, m, y, h, min, secs, symbol, price) << endl;
@@ -84,10 +83,8 @@ ticker_storage file_manager::file_reader(const string input_path) {
 
         tk = ticker{date, time_, secs, symbol, price};
         ts.add_ticker(tk);
-    } while (params == 8);
-
+    } //while (params == 8);
     fclose(fp);
-
     /////
     return ts;
 

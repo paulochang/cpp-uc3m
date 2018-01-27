@@ -142,6 +142,7 @@ tbb::concurrent_vector<simplified_ticker> get_print_ready_vector(unsigned long m
         }
 
     }
+    printing_vector.shrink_to_fit();
     return printing_vector;
 }
 
