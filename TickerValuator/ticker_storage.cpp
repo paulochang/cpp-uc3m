@@ -27,6 +27,7 @@ void ticker_storage::add_ticker(const ticker &myTicker) {
 }
 
 void ticker_storage::sort_ticker() {
+    ticker_vector_.shrink_to_fit();
     parallel_sort(ticker_vector_.begin(), ticker_vector_.end(), std::less<ticker>());
     is_sorted = true;
 }

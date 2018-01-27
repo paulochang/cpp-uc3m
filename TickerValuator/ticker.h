@@ -31,7 +31,7 @@ public:
 
     double price() const;
 
-    double price_nr() const;
+    unsigned short price_nr() const;
 
     const std::string &symbol() const;
 
@@ -42,7 +42,7 @@ private:
     double seconds_{0.000000};
     std::string symbol_{"Initial string"};
     double price_{0};
-    unsigned short price_nr_ {};
+    unsigned short price_nr_ {0};
 };
 
 std::ostream &operator<<(std::ostream &os, const ticker &tk);
