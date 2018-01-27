@@ -22,7 +22,8 @@ ticker_storage file_manager::file_reader(const string input_path) {
     //long counter = 0;
 
     // Open file
-    /*if (myfile.is_open()) {
+    /*
+    if (myfile.is_open()) {
 
         cin.exceptions(cin.exceptions() | ios_base::failbit);
 
@@ -55,12 +56,12 @@ ticker_storage file_manager::file_reader(const string input_path) {
     }
 
         //fclose(fp);
-
     else cout << "Unable to open file " << input_path << endl;
-*/
+
+    */
     //////
 
-
+    
     FILE *fp;
 
     fp = fopen(input_path.c_str(), "r");
@@ -122,7 +123,7 @@ ticker_storage file_manager::file_reader(const string input_path) {
     }
 
     fclose(fp);
-
+    
     /////
     return ts;
 

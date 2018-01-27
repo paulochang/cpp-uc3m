@@ -10,6 +10,7 @@
 #include <dirent.h>
 #include "tbb/parallel_for.h"
 #include <cmath>
+#include <chrono>
 
 
 typedef tbb::concurrent_unordered_map<std::string, std::pair<tbb::concurrent_vector<ticker>::iterator, tbb::concurrent_vector<ticker>::iterator>> MySymbolMap;
@@ -17,6 +18,7 @@ typedef tbb::concurrent_unordered_map<std::string, std::pair<tbb::concurrent_vec
 string output_path;
 unsigned long max_size;
 
+constexpr bool DEBUG_ = true;
 
 /// Manual ticker insertion
 /// \return ts a ticker_storage object
@@ -243,8 +245,9 @@ int main(int argc, char **argv) {
         }
     }
     //endregion
-
-//    std::cout << "initialized. " << endl;
+    if (DEBUG_) {
+    std::cout << "initialized. " << endl;
+    }
 
     if (!output_path.empty()) {
 
@@ -256,24 +259,22 @@ int main(int argc, char **argv) {
         }
     }
 
-    //   std::cout << "Read directory " << endl;
-
     if (filename.empty()) {
         ts = manual_ticker_insertion();
     } else {
         ts = fm.file_reader(filename);
     }
-
-    //   std::cout << "Read file " << endl;
-
+    if (DEBUG_) {
+       std::cout << "Read file " << endl;
+    }
     auto time_read_file = std::chrono::high_resolution_clock::now();
 
     // ** Process Ticker List **
     // 1. Sort ticker based on symbol, date and time
     ts.sort_ticker();
-
-//    std::cout << "sorted vector" << endl;
-
+if (DEBUG_) {
+    std::cout << "sorted vector" << endl;
+}
     auto time_sort = std::chrono::high_resolution_clock::now();
     //region DEBUG - DISPLAY SORTED VECTOR
     /*
@@ -288,22 +289,22 @@ int main(int argc, char **argv) {
     // Final structure is:
     // Map<Symbol, { beginning iterator, end iterator } >
     ts.symbol_classify();
-
-//    std::cout << "classified vector" << endl;
-
+if (DEBUG_) {
+    std::cout << "classified vector" << endl;
+}
     auto time_classify = std::chrono::high_resolution_clock::now();
 
     // 3. Initialize vector to print ticker's
 
     // 4. calculate areas
     //region DEBUG - TICKER CLASSIFYING MAP
-    //std::cout << "ticker classifying map:" << endl;
+    //std::cout << "ticker classifying map:" << endl; 
     //endregion
 
     print_processed_list(ts);
-
-//    std::cout << "printed vector" << endl;
-
+if (DEBUG_) {
+    std::cout << "printed vector" << endl;
+}
     auto time_print_file = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> duration_initialize = time_initialize_variables - time_start;
     std::cout << "Initialize time: " << duration_initialize.count() << " s\n";
