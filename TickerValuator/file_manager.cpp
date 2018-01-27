@@ -18,49 +18,6 @@ ticker_storage file_manager::file_reader(const string input_path) {
 
     ifstream myfile(input_path);
 
-
-    //long counter = 0;
-
-    // Open file
-    /*
-    if (myfile.is_open()) {
-
-        cin.exceptions(cin.exceptions() | ios_base::failbit);
-
-        ticker tk;
-        //unsigned int d;
-        //unsigned int m;
-        //unsigned int y;
-        //unsigned int h;
-        //unsigned int min;
-        //double secs;
-        //char symbol[32];
-        //double price;
-        //13-02-2002 18:58:19.594486 "BBVA" 184.18
-        // while(int ret = fscanf(fp, "%u-%u-%u %u:%u:%lf \"%[^\"]\" %lf",
-        //                      &d, &m, &y, &h, &min, &secs, symbol, &price) == 8) {
-
-        while (myfile >> tk) {
-            // DEBUG
-            // cout << "counter: " << counter++;
-            // unsigned int date = d + m * 100u + y * 10000u;
-            //unsigned short time_ = static_cast<unsigned short>(h * 100u + min);
-            //tk = ticker{date, time_, secs, symbol, price};
-
-            ts.add_ticker(tk);
-
-            //cout << "Ticker cout: " << tk << endl;
-        }
-        myfile.close();
-
-    }
-
-        //fclose(fp);
-    else cout << "Unable to open file " << input_path << endl;
-
-    */
-    //////
-
     
     FILE *fp;
 
@@ -75,7 +32,10 @@ ticker_storage file_manager::file_reader(const string input_path) {
     char symbol[32];
     double price;
     int params = 0;
+
+    // Sample format:
     //13-02-2002 18:58:19.594486 "BBVA" 184.18
+
     do {
         params = fscanf(fp, "%u-%u-%u %u:%u:%lf \"%[^\"]\" %lf", &d, &m, &y, &h, &min, &secs, symbol, &price);
 
@@ -152,11 +112,8 @@ void file_manager::file_writer(const string output_path, const string file_name,
     if (myfile.is_open()) {
 
         for (auto stk : printing_vector) {
-
             stk.write(writer);
-        
         }
-        //myfile << writer.c_str();
         myfile.write(writer.c_str(), writer.size());
         myfile.close();
     }
