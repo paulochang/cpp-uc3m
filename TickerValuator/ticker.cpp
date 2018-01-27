@@ -14,7 +14,8 @@ ticker::ticker(const unsigned short d, const unsigned short m, const unsigned sh
     time_ = static_cast<unsigned short>(h * 100u + min);
     seconds_ = secs + decimals;
     symbol_ = symbol;
-    price_.push_back(price);
+    price_= price;
+    price_nr_ = 1;
 }
 
 ticker::ticker(const unsigned int date, const unsigned short my_time, const double seconds, const std::string symbol,
@@ -23,19 +24,17 @@ ticker::ticker(const unsigned int date, const unsigned short my_time, const doub
     time_ = my_time;
     seconds_ = seconds;
     symbol_ = symbol;
-    price_.push_back(price);
+    price_= price;
+    price_nr_ = 1;
 }
 
-void ticker::add_price(const double price) {
-    price_.push_back(price);
-}
-
-void ticker::add_price(const std::vector<double> priceVector) {
-    price_.insert(price_.end(), priceVector.begin(), priceVector.end());
+void ticker::add_price(const double price, unsigned short price_nr) {
+    price_ += price;
+    price_nr_ += price_nr;
 }
 
 double ticker::avg_price() const {
-    return std::accumulate(price_.begin(), price_.end(), 0.0) / price_.size();
+    return price_ / price_nr_;
 }
 
 
@@ -62,23 +61,17 @@ double ticker::seconds() const {
     return seconds_;
 }
 
-const std::vector<double> &ticker::price() const {
+double ticker::price() const {
     return price_;
+}
+
+double ticker::price_nr() const {
+    return price_nr_;
 }
 
 const std::string &ticker::symbol() const {
     return symbol_;
 }
-
-//const std::string ticker::to_string() const {
-//    std::string s = "ticker {"+ getSymbol_()
-//                    + " date: " + std::to_string(getDate_())
-//                    + " time: " + std::to_string(getTime_())
-//                    + " seconds: " + std::to_string(getSeconds_())
-//                    + " price: " + std::to_string(get_avg_price())
-//                    +"}";
-//    return s;
-//}
 
 std::ostream & operator<<(std::ostream & os, const ticker & tk)  
 { 
@@ -97,8 +90,8 @@ std::istream & operator>>(std::istream & is, ticker & tk) {
     unsigned int date = 200001001;
     unsigned short my_time = 0000;
     try {
-        date = stoi(date_str.substr(6, 4) + date_str.substr(3, 2) + date_str.substr(0, 2));
-        my_time = stoi(time_str.substr(0, 2) + time_str.substr(3, 2));
+        date = static_cast<unsigned int>(stoi(date_str.substr(6, 4) + date_str.substr(3, 2) + date_str.substr(0, 2)));
+        my_time = static_cast<unsigned short>(stoi(time_str.substr(0, 2) + time_str.substr(3, 2)));
     } catch (const std::exception &e) {
         std::cout << e.what();
         std::cout << "date" << date_str;
