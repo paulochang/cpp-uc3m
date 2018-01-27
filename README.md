@@ -56,6 +56,7 @@ El objeto `ticker` es utilizado para representar cada uno de los datos de entrad
 * `ticker(unsigned short d, unsigned short m, unsigned short y, unsigned short h, unsigned short min, unsigned short secs, float decimals, std::string symbol, double price)`: Constructor del objeto *ticker*.
 
 	Parámetros 
+	
 	* `unsigned short d`: Valor numérico del día (dd).
 	* `unsigned short m`: Valor numérico del mes (mm).
 	* `unsigned short y`: Valor numérico del año (yyyy).
@@ -70,6 +71,7 @@ El objeto `ticker` es utilizado para representar cada uno de los datos de entrad
 * `ticker(unsigned int date, unsigned short my_time, double seconds, std::string symbol, double price)`: Constructor del objeto *ticker*
 
 	Parámetros
+	
 	* `unsigned int date`: Valor de la fecha en formato numérico (15112018 representa la fecha 15 de noviembre de 2018).
 	* `unsigned short my_time`: Valor del tiempo en formato numérico (1234 representa la hora 12:34).
 	* `double seconds`: Valor de la parte decimal de los segundos.
@@ -79,52 +81,63 @@ El objeto `ticker` es utilizado para representar cada uno de los datos de entrad
 * `void add_price(double price)`: Método para fijar el valor del precio.
 	
 	Parámetros
+	
 	* `double price`: Valor numérico del precio (parte entera y decimal).
 
 * `double avg_price() const`: Método para obtener el valor promedio del precio.
 	
 	Retorno
+	
 	* `double avg_price` : Valor del precio promedio para el *ticker*.
 
 * `bool operator<(const ticker &a) const`: Método que sustituye al operador `<` para determinar el orden de dos *ticker*.
 	
 	Parámetros
+	
 	* `const ticker &a`: 	Objeto *ticker* con el que se desea hacer la comparación.
 	 
 	Retorno
+	
 	* `bool <`: *true* en caso sea menor el *ticker* comparado con el que es recibió de parámetro.
 
 * `bool operator==(const ticker &a) const`: Método que sustituye al operador `==` para determinar igualdad de dos *ticker*.
 
 	Parámetros
+	
 	* `const ticker &a`: 	Objeto *ticker* con el que se desea hacer la comparación.
 	 
 	Retorno
+	
 	* `bool ==`: *true* en caso sea igual el *ticker* comparado con el que es recibió de parámetro.
 
 * `unsigned int date() const`: Método para obtener el valor de la fecha (ddmmyyyy) del *ticker*.
 
 	Retorno
+	
 	* `unsigned int date`: Valor de la fecha en formato numérico (15112018 representa la fecha 15 de noviembre de 2018).
 
 * `unsigned short time() const`: Método para obtener el valor del tiempo (hhmm) del *ticker*.
 
 	Retorno
+	
 	* `unsigned short time`: Valor del tiempo en formato numérico (1234 representa la hora 12:34).
 
 * `double seconds() const`: Método para obtener el valor de los segundos del *ticker*.
 
 	Retorno
+	
 	* `double seconds`: Valor de la parte decimal de los segundos.
 
 * `const double &price() const`: Método para obtener el valor del precio del *ticker*.
 
 	Retorno
+	
 	* `const double price`: Valor numérico del precio (parte entera y decimal).
 
 * `const std::string &symbol() const`: Método para obtener el valor del símbolo del *ticker*.
 
 	Retorno
+	
 	* `const std::string symbol`: Cadena de caracteres que representa el símbolo del *ticker*.
 
 
@@ -144,6 +157,7 @@ El objeto `simplified_ticker` es utilizado para representar un objeto `ticker` a
 * `simplified_ticker(unsigned int date_, unsigned short time_, double price)`: Constructor del objeto *simplified ticker*
 
 	Parámetros
+	
 	* `unsigned int date_`: Valor de la fecha en formato numérico (15112018 representa la fecha 15 de noviembre de 2018).
     
 	* `unsigned short time_`: Valor del tiempo en formato numérico (1234 representa la hora 12:34).
@@ -152,21 +166,25 @@ El objeto `simplified_ticker` es utilizado para representar un objeto `ticker` a
 * `unsigned int date() const`: Método para obtener el valor de la fecha (ddmmyyyy) del *ticker*.
 
 	Retorno
+	
 	* `unsigned int date`: Valor de la fecha en formato numérico (15112018 representa la fecha 15 de noviembre de 2018).
 
 * `unsigned short time() const`: Método para obtener el valor del tiempo (hhmm) del *ticker*.
 
 	Retorno
+	
 	* `unsigned short time`: Valor del tiempo en formato numérico (1234 representa la hora 12:34).
 
 * `double price() const`: Método para obtener el valor del precio del *ticker*.
 
 	Retorno
+	
 	* `double price`: Valor numérico del precio (parte entera y decimal).
 
 * `void write(fmt::MemoryWriter &out)`: Método utilizado para la impresión de los valores del *ticker* de acuerdo al formato necesario.
 
 	Parámetros
+	
 	* `fmt::MemoryWriter &out`: Objeto `MemoryWriter` de la biblioteca *fmt* en donde se agregará el *ticker* actual.
 
 
