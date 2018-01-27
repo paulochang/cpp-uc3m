@@ -1,12 +1,10 @@
 
 #include <iostream>
 #include <fstream>
-#include <stdio.h>
 
 #include <regex>
 #include <sstream>
 #include "file_manager.h"
-#include "fmt/format.h"
 
 using namespace std;
 
@@ -89,7 +87,7 @@ ticker_storage file_manager::file_reader(const string input_path) {
     } while (params == 8);
 
     fclose(fp);
-    
+
     /////
     return ts;
 
